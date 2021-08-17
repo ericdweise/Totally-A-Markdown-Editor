@@ -1,0 +1,173 @@
+/* DIVs */
+html {
+    font-family: Trebuchet MS, Arial, sans-serif;
+    background-color: #323232;
+    background-image: url("/assets/images/background.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+body {
+    margin: auto;
+    margin-top: 2ch;
+    margin-bottom: 2ch;
+    width: 150ch;
+    color: #000000;
+}
+div#container {
+    display: table;
+    width: 100%;
+    margin: 0;
+    padding-top: 2ch;
+    padding-bottom: 2ch;
+}
+div#contents {
+    display: table-cell;
+    width: 70%;
+    height: 100%;
+    max-width: 100ch;
+    border-radius: 2ch;
+    background-color: rgba(255,255,255,0.75);
+    padding: 1ch;
+}
+div#spacer {
+    display: table-cell;
+    width: 5%;
+    visibility:hidden;
+}
+div#site-dir {
+    display: table-cell;
+    width: 25%;
+    height: 100%;
+    border-radius: 2ch;
+    background-color: rgba(255,255,255,0.75);
+    padding: 1ch;
+}
+div#header, div#footer {
+    clear: both;
+    border-radius: 2ch;
+    padding-top: 1ch;
+    padding-bottom: 1ch;
+    background-color: rgba(250,250,255,0.9);
+    text-align: center;
+}
+div#footer {
+}
+.clearfix:before, .clearfix:after {
+    content: '\0020';
+    display: block;
+    overflow: hidden;
+    visibility: hidden;
+    width: 0;
+    height: 0; }
+.clearfix:after {
+    clear: both;
+}
+.clearfix {
+    zoom: 1;
+}
+
+/* Misc. Elements */
+hr {
+    border: none;
+    height: 1px;
+    background-color: #909090;
+}
+ul {
+    list-style-type: '-  ';
+}
+
+/* HEADERS */
+a.site-title {
+    color: #2a6c6c;
+    font-size: 50px;
+    font-weight: bold;
+    text-decoration: none;
+}
+h2 {
+    margin-top: 3ch;
+    border-top: 1px solid #909090;
+}
+
+
+
+/* TEXT */
+.center {
+    text-align: center;
+}
+a {
+    color: #4b80c0;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* INLINE CODE */
+code {
+    color: #2a6c6c;
+}
+
+/* CODE BLOCKS */
+code.sourceCode {
+    color: #b0b0ff;
+}
+div.sourceCode {
+    background-color: #081818;
+    border-radius: 1ch;
+    max-width: 80ch;
+}
+pre.sourceCode {
+    max-width: 100%;
+    padding: 1ch;
+    overflow-x: scroll;
+    scrollbar-color: rgba(255,255,255,0.35) rgba(0,0,0,0);
+    scrollbar-width: thin;
+}
+a.sourceLine {
+    color: #ffffff;
+    text-decoration: none;
+}
+code span.al { color: #ff0000; }                    /* Alert           red */
+code span.an { color: #ffb0b0; font-weight: bold; } /* Annotation      salmon */
+code span.at { }                                    /* Attribute */
+code span.bn { color: #ccff00; }                    /* BaseN           lime green */
+code span.bu { color: #ffc800; }                    /* BuiltIn         goldenrod */
+code span.cf { color: #ffc800; }                    /* ControlFlow     goldenrod */
+code span.ch { color: #ccff00; }                    /* Char            lime green */
+code span.cn { color: #ccff00; font-weight: bold; } /* Constant        lime green */
+code span.co { color: #c0c0c0; }                    /* Comment         gray */
+code span.cv { color: #ffb0b0; font-weight: bold; } /* CommentVar      salmon */
+code span.do { color: #ffb0b0; }                    /* Documentation   salmon */
+code span.dt { color: #c020d0; }                    /* DataType        purple */
+code span.dv { color: #ccff00; }                    /* DecVal          lime green */
+code span.er { color: #ff0000; }                    /* Error           red */
+code span.ex { color: #ffb0b0; }                    /* Extension       salmon */
+code span.fl { color: #ccff00; }                    /* Float           lime green */
+code span.fu { color: #ffb0b0; }                    /* Function        salmon */
+code span.im { color: #f0b0b0; }                    /* Import          salmon */
+code span.in { color: #f0b0b0; font-weight: bold; } /* Information     salmon */
+code span.kw { color: #ffc800; }                    /* Keyword         goldenrod */
+code span.op { color: #f0efd0; }                    /* Operator */
+code span.ot { color: #efef8f; }                    /* Other */
+code span.pp { color: #ffb0b0; font-weight: bold; } /* Preprocessor    salmon */
+code span.sc { color: #ccff00; }                    /* SpecialChar     lime green */
+code span.ss { color: #ffffff; }                    /* SpecialString   white */
+code span.st { color: #ffffff; }                    /* String          white */
+code span.va { color: #b0b0ff; }                    /* Variable        powder blue */
+code span.vs { color: #ffffff; }                    /* VerbatimString  white */
+code span.wa { color: #ffb0b0; font-weight: bold; } /* Warning         salmon */
+
+/* TABLES */
+table, td, th {
+    border-collapse: collapse;
+    border: 1px solid #909090;
+}
+td {
+    padding: 0.5ch;
+}
+
+/* MathJax */
+mjx-math {
+    color: rgb(0,75,75);
+}

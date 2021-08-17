@@ -1,0 +1,46 @@
+#!/bin/bash
+set -e
+
+
+function convert {
+    INFILE=$1
+    OUTFILE=$(echo $INFILE | sed -r 's/.md/.html/')
+    echo "$INFILE ---> $OUTFILE"
+    echo '<!DOCTYPE html>' > $OUTFILE
+    echo '<html lang="en">' >> $OUTFILE
+    cat assets/head.html >> $OUTFILE
+    echo '<body>' >> $OUTFILE
+    cat assets/header.html >> $OUTFILE
+
+    echo '<div id="container" class="clearfix">' >> $OUTFILE
+
+    echo '<div id="contents">' >> $OUTFILE
+    pandoc --from=markdown --to=html5 --mathjax $INFILE >> $OUTFILE
+    echo '</div> <!-- id="contents" -->' >> $OUTFILE
+
+    echo '<div class="spacer"></div>' >> $OUTFILE
+
+    echo '<div id="site-dir">' >> $OUTFILE
+    cat assets/site-directory.html >> $OUTFILE
+    echo '</div> <!-- id="site-dir" -->' >> $OUTFILE
+
+    echo '</div> <!-- id="container" -->' >> $OUTFILE
+
+    cat assets/footer.html >> $OUTFILE
+    echo '</body>' >> $OUTFILE
+    echo '</html>' >> $OUTFILE
+}
+
+
+# Make site directory
+./site-dir.py > assets/site-directory.html
+
+if [ "$#" -gt 0 ]; then
+    for FILE in "$*"; do
+        convert $FILE
+    done
+else
+    for FILE in $(find . -type f | grep -e '\.md$'); do
+        convert $FILE
+    done
+fi
