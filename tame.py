@@ -82,9 +82,9 @@ def make_page(title, contents, site_directory):
 		<title>TAME Notes</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="/assets/stylesheets/main.css">
-		<link rel="stylesheet" href="/assets/stylesheets/editor.css">
 		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script src="/assets/javascript/editor.js"></script>
 		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body>
@@ -93,24 +93,27 @@ def make_page(title, contents, site_directory):
 		</div> <!-- header -->
 		<div id="container" class="clearfix">
 			<div id="contents">
-				{contents}
+                <div id="viewer">
+                    {contents}
+                </div> <!-- id="viewer" -->
+                <div id="editor" contenteditable="true" class="hidden">
+                </div> <!-- id="editor" -->
 			</div> <!-- id="contents" -->
 			<div class="spacer"></div>
-			<div id="site-dir">
-			<div id="view-menu">
-				<div class="button">'
-					<button id="edit">Edit Markdown</button>'
-					<button id="dir">New Directory</button>'
-					<button id="file">New File</button>'
-				</div> <!-- class="button -->'
-			</div> <!-- id="view-menu" -->
-			<div id="edit-menu">
-				<button id="save">Save</button>
-				<button id="abort">Abort Changes</button>
-				<button id="vim">VIM</button>
-			</div> <!-- id="edit-menu" -->
+			<div id="sidebar">
+                <div id="view-menu">
+                    <div class="button">
+                        <button id="edit">Edit Markdown</button>
+                        <button id="dir">New Directory</button>
+                        <button id="file">New File</button>
+                    </div> <!-- class="button -->
+                </div> <!-- id="view-menu" -->
+                <div id="edit-menu" class="hidden">
+                    <button id="save">Save</button>
+                    <button id="abort">Abort Changes</button>
+                </div> <!-- id="edit-menu" -->
 				{site_directory}
-			</div> <!-- id="site-dir" -->
+			</div> <!-- id="sidebar" -->
 		</div> <!-- id="container" -->
 		<div id="footer">
 			<p>This site was made with <em>TAME! (Totally A Markdown Editor)</em></p>
