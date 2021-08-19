@@ -8,7 +8,7 @@ $(document).ready(function(){
 
         var mdfile = window.location.pathname.replace(/\.html$/, '.md');
         console.log("Loading Markdown: " + mdfile);
-        $.get("index.md", function (data) {
+        $.get(mdfile, function (data) {
             $("#editor").html(data);
         });
     });
