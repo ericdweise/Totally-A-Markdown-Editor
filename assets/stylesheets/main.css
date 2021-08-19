@@ -11,7 +11,7 @@ body {
     margin: auto;
     margin-top: 2ch;
     margin-bottom: 2ch;
-    width: 150ch;
+    max-width: 150ch;
     color: #000000;
 }
 div#container {
@@ -55,9 +55,6 @@ div#sidebar {
     background-color: rgba(255,255,255,0.75);
     padding: 1ch;
 }
-div#edit-menu, div#view-menu {
-    border-bottom: solid 1px #000000;
-}
 div#header, div#footer {
     clear: both;
     border-radius: 2ch;
@@ -89,17 +86,15 @@ hr {
     height: 1px;
     background-color: #909090;
 }
-ul {
-    list-style-type: '-  ';
-}
 button {
 	margin: 0.5ch;
 	color: #ffffff;
 	background-color: #2a6c6c;
-	border: solid 2px 153636;
+	border: solid 2px #153636;
 	border-radius: 1ch;
-	padding: 1ch;
-    width: 45%;
+	padding: 0.5ch;
+    width: 16ch;
+    font-weight: bold;
 }
 
 

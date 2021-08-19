@@ -93,6 +93,14 @@ def make_page(title, contents, site_directory):
 		</div> <!-- header -->
 		<div id="container" class="clearfix">
 			<div id="contents">
+                <div id="view-menu">
+                    <button id="edit">Edit Markdown</button>
+                    <button id="file">New Note</button>
+                </div> <!-- id="view-menu" -->
+                <div id="edit-menu" class="hidden">
+                    <button id="save">Save</button>
+                    <button id="abort">Abort</button>
+                </div> <!-- id="edit-menu" -->
                 <div id="viewer">
                     {contents}
                 </div> <!-- id="viewer" -->
@@ -101,17 +109,6 @@ def make_page(title, contents, site_directory):
 			</div> <!-- id="contents" -->
 			<div class="spacer"></div>
 			<div id="sidebar">
-                <div id="view-menu">
-                    <div class="button">
-                        <button id="edit">Edit Markdown</button>
-                        <button id="dir">New Directory</button>
-                        <button id="file">New File</button>
-                    </div> <!-- class="button -->
-                </div> <!-- id="view-menu" -->
-                <div id="edit-menu" class="hidden">
-                    <button id="save">Save</button>
-                    <button id="abort">Abort Changes</button>
-                </div> <!-- id="edit-menu" -->
 				{site_directory}
 			</div> <!-- id="sidebar" -->
 		</div> <!-- id="container" -->

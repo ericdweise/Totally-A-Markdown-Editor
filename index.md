@@ -1,4 +1,4 @@
-TAME - Totally A Markdown Editor!
+TAME is Totally A Markdown Editor!
 
 # Introduction
 Hi, there!
@@ -11,6 +11,7 @@ These were either:
 
 You won't find anything fancy in this domesticated environment, but you will be able to edit whatever you like.
 _And_, we won't steal your data; It's all yours!
+(Just make sure to back it up...)
 
 
 # Getting Started
