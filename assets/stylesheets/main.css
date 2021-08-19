@@ -41,6 +41,7 @@ div#editor {
 	background-color: #ffffff;
 	padding: 2ch;
 	min-height:20ch;
+    white-space: pre-wrap;
 }
 div#spacer {
     display: table-cell;

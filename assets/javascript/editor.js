@@ -5,6 +5,12 @@ $(document).ready(function(){
         $('#editor').removeClass('hidden');
         $('#view-menu').addClass('hidden');
         $('#viewer').addClass('hidden');
+
+        var mdfile = window.location.pathname.replace(/\.html$/, '.md');
+        console.log("Loading Markdown: " + mdfile);
+        $.get("index.md", function (data) {
+            $("#editor").html(data);
+        });
     });
 
     // Save Button
@@ -22,7 +28,4 @@ $(document).ready(function(){
         $('#view-menu').removeClass('hidden');
         $('#viewer').removeClass('hidden');
     });
-
-    // Create Directory Button
-    // Create File Button
 })
