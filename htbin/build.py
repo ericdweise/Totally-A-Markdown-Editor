@@ -5,20 +5,26 @@ import os
 import pprint
 import pypandoc
 import subprocess
+import sys
 
 
 SKIP_DIRS = (
 		'.bak',
 		'.git',
-		'assets')
+		'assets',
+		'htbin')
 
 
 def get_title(path):
 	with open(path, 'r') as f:
 		title = f.readline().strip()
 
-	while title[0] in ('#', ' '):
-		title = title[1:]
+	if len(title):
+		while title[0] in ('#', ' '):
+			if len(title) > 1:
+				title = title[1:]
+			else:
+				break
 
 	if not len(title):
 		title = 'Unknown'
@@ -62,9 +68,12 @@ def recurse(root, depth, string):
 	for f in files:
 		path = os.path.join(root, f)
 		title = get_title(path)
+		l = path.split(os.sep)
+		url = '/' + '/'.join(l[-1*depth-1:])
+		url = url.replace('.md', '.html')
 		string += '\n'
 		string += '\t'*(depth+1)
-		string += f'<li><a href="{path[1:].replace(".md", ".html")}">{title}</a></li>'
+		string += f'<li><a href="{url}">{title}</a></li>'
 
 	if len(files):
 		string += '\n'
@@ -74,7 +83,13 @@ def recurse(root, depth, string):
 	return string
 
 
-def make_page(title, contents, site_directory):
+site_root = os.path.realpath(__file__)
+site_root = os.path.split(site_root)[0]
+site_root = os.path.split(site_root)[0]
+SITE_DIR = recurse(f'{site_root}', 0, '')
+
+
+def make_html(title, contents, site_directory):
 	return f'''<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -120,29 +135,42 @@ def make_page(title, contents, site_directory):
 </html>'''
 
 
-if __name__ == '__main__':
-	site_directory = recurse('.', 0, '')
+def make_page(md_file, site_directory):
+	assert(md_file.endswith('.md'))
 
+	html_file = md_file.replace('.md', '.html')
+	print(f'  {md_file} ---> {html_file}')
+
+	title = get_title(md_file)
+
+	with open(md_file, 'r') as fin:
+		_ = fin.readline()
+		markdown = fin.read()
+
+	contents = pypandoc.convert_text(
+			markdown,
+			'html5',
+			format='md')
+
+	html = make_html(title, contents, site_directory)
+
+	with open(html_file, 'w') as fp:
+		fp.write(html)
+
+
+def make_all():
 	for root, _, files in os.walk('.'):
 		for f in files:
 			if not (f.endswith('.md') or f.endswith('.MD')):
 				continue
 
 			md_file = os.path.join(root, f)
-			html_file = md_file.replace('.md', '.html')
-			print(f'  {md_file} ---> {html_file}')
+			make_page(md_file, SITE_DIR)
 
-			title = get_title(md_file)
 
-			with open(md_file, 'r') as fin:
-				_ = fin.readline()
-				markdown = fin.read()
-
-			contents = pypandoc.convert_text(
-					markdown,
-					'html5',
-					format='md')
-			html = make_page(title, contents, site_directory)
-
-			with open(html_file, 'w') as fp:
-				fp.write(html)
+if __name__ == '__main__':
+	if len(sys.argv) > 1:
+		for path in sys.argv[1:]:
+			make_page(path, SITE_DIR)
+	else:
+		make_all()

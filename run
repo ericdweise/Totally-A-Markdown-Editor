@@ -1,8 +1,3 @@
 #!/bin/bash
 
-set -e
-
-
-docker run \
-    -dit --name tame-http -p 8080:80 \
-    -v "$PWD":/usr/local/apache2/htdocs/ httpd:2.4
+python -m http.server --cgi

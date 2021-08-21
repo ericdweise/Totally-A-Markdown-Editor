@@ -17,12 +17,15 @@ $(document).ready(function(){
     $('#save').click(function() {
         // Save editor content
         var mdfile = window.location.pathname.replace(/\.html$/, '.md');
-        var text = new FormData();
-        text.append("data", $('#editor').text());
-        text.append("file", mdfile);
+        var form = new FormData();
+        var data = $('#editor').text();
+        console.log(data);
+        form.append("data", data); // $('#editor').text().replace(/\n/g, '<br>'));
+        form.append("target", mdfile);
         var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
-        xhr.open( 'post', '/assets/php/save.php', true );
-        xhr.send(text);
+        xhr.open( 'post', '/htbin/save.py', true );
+        xhr.overrideMimeType('text/x-python');
+        xhr.send(form);
 
         // reload page
     });
