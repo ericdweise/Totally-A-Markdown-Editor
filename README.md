@@ -19,7 +19,6 @@ TODO
 
 
 # Ongoing Work
-- Favicon
 - "New Note" button
 - When screen is narrow (under 100ch??) move sidebar below contents
 - New background photo
@@ -31,4 +30,5 @@ TODO
 - Markdown page under 'Using Tame/'
 - Button to Add Topic
 - Add arguments to `run`: bind addresses, port
-- Homepage (blank, does not allow editing)
+- Homepage (just athe site directory, does not allow editing)
+- Separate Markdown and HTML directories

@@ -94,7 +94,7 @@ def make_html(title, contents, site_directory):
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>TAME Notes</title>
+		<title>&#x1F989; - {title}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="/assets/stylesheets/main.css">
 		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
