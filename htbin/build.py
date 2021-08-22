@@ -124,6 +124,8 @@ def make_html(title, contents, site_directory):
 			</div> <!-- id="contents" -->
 			<div class="spacer"></div>
 			<div id="sidebar">
+				<h2>Notes</h2>
+				<hr>
 				{site_directory}
 			</div> <!-- id="sidebar" -->
 		</div> <!-- id="container" -->

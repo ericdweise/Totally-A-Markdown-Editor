@@ -33,4 +33,3 @@ TODO
 - Button to Add Topic
 - Add arguments to `run`: bind addresses, port
 - Homepage (blank, does not allow editing)
-- Add "Notes" header to top of site directory
