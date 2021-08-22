@@ -8,7 +8,7 @@ import sys
 from build import make_page, SITE_DIR
 
 form = cgi.FieldStorage()
-data = form.getvalue('data','None')
+data = form.getvalue('data','None').replace('\r\n', '\n')
 path = os.path.join(pathlib.Path(__file__).parent.absolute(), form.getvalue('target','None'))
 
 if '..' in path:
@@ -19,6 +19,9 @@ if '~' in path:
 
 while path.startswith('/'):
 	path = path[1:]
+
+if not data.endswith('\n'):
+	data += '\n'
 
 if path:
 	with open(path,'w') as fp:
