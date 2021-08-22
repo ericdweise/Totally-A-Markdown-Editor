@@ -33,9 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 # Ongoing Work
-- "New Note" button
 - New background photo
-- Make a static site directory file and serve it with Ajax
 - Add ajax response when a note has been successfully saved. Reload page after receipt, print error if there was an error.
 - Markdown page under 'Using Tame/'
 - Button to Add Topic

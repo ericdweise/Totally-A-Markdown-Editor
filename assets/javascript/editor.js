@@ -87,4 +87,7 @@ $(document).ready(function(){
 			this.focus();
 		}
 	});
+
+	// Load site map
+	$('#sidebar').load('/assets/sitemap.html')
 })

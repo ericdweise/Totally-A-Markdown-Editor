@@ -5,9 +5,10 @@ import os
 import pathlib
 import sys
 
-from build import make_all, make_page, SITE_DIR
-
-# ROOT, _ = os.path.split(pathlib.Path(__file__).parent.absolute())
+from build import make_all
+from build import make_page
+from build import make_sitemap
+from build import SITE_ROOT
 
 
 def target_to_path(target):
@@ -37,7 +38,8 @@ def save_note(target, data):
 		with open(path,'w') as fp:
 			fp.write(data)
 
-	make_page(path, SITE_DIR)
+	make_page(path)
+	make_sitemap()
 
 
 def new_note(target):
@@ -53,7 +55,8 @@ def new_note(target):
 	with open(path, 'w') as fp:
 		fp.write(contents)
 
-	make_page(path, SITE_DIR)
+	make_page(path)
+	make_sitemap()
 
 
 if __name__ == '__main__':

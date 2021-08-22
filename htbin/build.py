@@ -2,12 +2,15 @@
 
 import functools
 import os
+import pathlib
 import pprint
 import pypandoc
 import subprocess
 import sys
 
 
+SITE_ROOT, _ = os.path.split(pathlib.Path(__file__).parent.absolute())
+SITEMAP_PATH = 'assets/sitemap.html'
 SKIP_DIRS = (
 		'.bak',
 		'.git',
@@ -15,19 +18,19 @@ SKIP_DIRS = (
 		'htbin')
 
 
-def get_title(path):
-	with open(path, 'r') as f:
+def get_title(md_path):
+	with open(md_path, 'r') as f:
 		title = f.readline().strip()
+
+	if (title is None) or (not len(title)):
+		title = 'Unknown'
 
 	if len(title):
 		while title[0] in ('#', ' '):
 			if len(title) > 1:
 				title = title[1:]
 			else:
-				break
-
-	if not len(title):
-		title = 'Unknown'
+				title = 'Unknown'
 
 	return title
 
@@ -83,13 +86,7 @@ def recurse(root, depth, string):
 	return string
 
 
-site_root = os.path.realpath(__file__)
-site_root = os.path.split(site_root)[0]
-site_root = os.path.split(site_root)[0]
-SITE_DIR = recurse(f'{site_root}', 0, '')
-
-
-def make_html(title, contents, site_directory):
+def make_html(title, contents):
 	return f'''<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -124,9 +121,6 @@ def make_html(title, contents, site_directory):
 			</div> <!-- id="contents" -->
 			<div class="spacer"></div>
 			<div id="sidebar">
-				<h2>Notes</h2>
-				<hr>
-				{site_directory}
 			</div> <!-- id="sidebar" -->
 		</div> <!-- id="container" -->
 		<div id="footer">
@@ -137,7 +131,13 @@ def make_html(title, contents, site_directory):
 </html>'''
 
 
-def make_page(md_file, site_directory):
+def make_sitemap(site_root=SITE_ROOT, sitemap_path=SITEMAP_PATH):
+	sitemap = recurse(site_root, 0, '<h2>Notes</h2>\n<hr>')
+	with open(sitemap_path, 'w') as fp:
+		fp.write(sitemap)
+
+
+def make_page(md_file):
 	assert(md_file.endswith('.md'))
 
 	html_file = md_file.replace('.md', '.html')
@@ -154,20 +154,22 @@ def make_page(md_file, site_directory):
 			'html5',
 			format='md')
 
-	html = make_html(title, contents, site_directory)
+	html = make_html(title, contents)
 
 	with open(html_file, 'w') as fp:
 		fp.write(html)
 
 
-def make_all():
-	for root, _, files in os.walk('.'):
+def make_all(site_root=SITE_ROOT):
+	make_sitemap(site_root)
+
+	for root, _, files in os.walk(site_root):
 		for f in files:
 			if not (f.endswith('.md') or f.endswith('.MD')):
 				continue
 
 			md_file = os.path.join(root, f)
-			make_page(md_file, SITE_DIR)
+			make_page(md_file)
 
 
 if __name__ == '__main__':
@@ -175,4 +177,4 @@ if __name__ == '__main__':
 		for path in sys.argv[1:]:
 			make_page(path, SITE_DIR)
 	else:
-		make_all()
+		make_all(SITE_ROOT)
