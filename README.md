@@ -26,7 +26,6 @@ TODO
 - License
 - Link to TAME Reopository in footer
 - New repository?? Not on my personal github...
-- Get rid of weird space at sides of table-cols
 - Make a static site directory file and serve it with Ajax
 - Add ajax response when a note has been successfully saved. Reload page after receipt, print error if there was an error.
 - Markdown page under 'Using Tame/'

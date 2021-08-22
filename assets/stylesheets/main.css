@@ -9,25 +9,38 @@ html {
 }
 body {
 	margin: auto;
-	margin-top: 2ch;
-	margin-bottom: 2ch;
 	max-width: 150ch;
 	color: #000000;
 }
 div#container {
+	margin: 0;
+	padding: 0;
 	display: table;
 	width: 100%;
-	margin: 0;
-	padding-top: 2ch;
-	padding-bottom: 2ch;
 }
 div#contents {
 	display: table-cell;
+	margin: 0;
+	padding: 1ch;
 	width: 70%;
 	height: 100%;
-	max-width: 100ch;
 	border-radius: 2ch;
+	background-color: rgba(255,255,255,0.75);
+}
+div#spacer {
+	margin: 0;
+	padding: 0;
+	display: table-cell;
+	width: 5ch;
+	visibility:hidden;
+}
+div#sidebar {
+	display: table-cell;
+	margin: 0ch;
 	padding: 1ch;
+	width: 25%;
+	height: 100%;
+	border-radius: 2ch;
 	background-color: rgba(255,255,255,0.75);
 }
 div#viewer {
@@ -43,20 +56,8 @@ div#editor {
 	min-height:20ch;
 	white-space: pre-wrap;
 }
-div#spacer {
-	display: table-cell;
-	width: 5%;
-	visibility:hidden;
-}
-div#sidebar {
-	display: table-cell;
-	width: 25%;
-	height: 100%;
-	border-radius: 2ch;
-	background-color: rgba(255,255,255,0.75);
-	padding: 1ch;
-}
 div#header, div#footer {
+	margin: 2ch;
 	clear: both;
 	border-radius: 2ch;
 	padding-top: 1ch;
