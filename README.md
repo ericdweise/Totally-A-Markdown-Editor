@@ -15,16 +15,29 @@ _And_, we won't steal your data; It's all yours!
 
 
 # License
-TODO
+TAME - Totally A Markdown Editor
+Copyright (C) 2021 Eric D. Weise
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 # Ongoing Work
 - "New Note" button
 - When screen is narrow (under 100ch??) move sidebar below contents
 - New background photo
-- License
 - Link to TAME Reopository in footer
-- New repository?? Not on my personal github...
+- Make public
 - Make a static site directory file and serve it with Ajax
 - Add ajax response when a note has been successfully saved. Reload page after receipt, print error if there was an error.
 - Markdown page under 'Using Tame/'
