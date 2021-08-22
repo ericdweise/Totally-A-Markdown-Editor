@@ -104,7 +104,7 @@ def make_html(title, contents, site_directory):
 	</head>
 	<body>
 		<div id="header">
-			<a class="site-title">{title}</a>
+			<p class="site-title">{title}</p>
 		</div> <!-- header -->
 		<div id="container" class="clearfix">
 			<div id="contents">
