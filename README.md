@@ -36,8 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 - "New Note" button
 - When screen is narrow (under 100ch??) move sidebar below contents
 - New background photo
-- Link to TAME Reopository in footer
-- Make public
 - Make a static site directory file and serve it with Ajax
 - Add ajax response when a note has been successfully saved. Reload page after receipt, print error if there was an error.
 - Markdown page under 'Using Tame/'
