@@ -82,6 +82,31 @@ div.hidden {
 	zoom: 1;
 }
 
+/* DIV small scren */
+@media screen and (max-width: 100ch) {
+	div#container {
+		display: inline-block;
+		position: relative;
+		margin: 0;
+		padding: 0;
+	}
+	div#contents, div#sidebar {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	div#header, div#footer, div#contents, div#sidebar {
+		margin: 0;
+		margin-bottom: 2ch;
+	}
+	div#header {
+		margin-top: 2ch;
+	}
+	div#spacer {
+		display: none;
+	}
+}
+
 /* Misc. Elements */
 hr {
 	border: none;
