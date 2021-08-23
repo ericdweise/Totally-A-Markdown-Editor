@@ -162,9 +162,29 @@ def make_page(md_path):
 	with open(html_path, 'w') as fp:
 		fp.write(html)
 
+def make_home():
+	title = get_title('README.md')
+
+	with open('README.md', 'r') as fp:
+		_ = fp.readline()
+		markdown = fp.read()
+
+	contents = pypandoc.convert_text(
+			markdown,
+			'html5',
+			format='md')
+	html = gen_html(title, contents)
+
+	with open('index.html', 'w') as fp:
+		fp.write(html)
+
 
 def make_all(site_root=MD_DIR):
+	if not os.path.isdir(site_root):
+		os.makedirs(site_root)
+
 	make_sitemap(site_root)
+	make_home()
 
 	for root, _, files in os.walk(site_root):
 		for f in files:
