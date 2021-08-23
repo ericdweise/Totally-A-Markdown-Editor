@@ -78,7 +78,7 @@ def recurse(root, depth, string):
 	for f in files:
 		path = os.path.join(root, f)
 		title = get_title(path)
-		url = path_to_url(path, depth)
+		url = '/' + path_to_url(path, depth)
 		string += f'\n<li><a href="{url}">{title}</a></li>'
 
 	if len(files):
