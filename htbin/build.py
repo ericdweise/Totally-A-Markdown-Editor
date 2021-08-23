@@ -9,7 +9,8 @@ import subprocess
 import sys
 
 
-SITE_ROOT, _ = os.path.split(pathlib.Path(__file__).parent.absolute())
+SITE_DIR = 'site'
+MD_DIR = 'markdown'
 SITEMAP_PATH = 'assets/sitemap.html'
 SKIP_DIRS = (
 		'.bak',
@@ -17,13 +18,28 @@ SKIP_DIRS = (
 		'assets',
 		'htbin')
 
+def path_to_url(path, depth=None):
+	if not path.endswith('.md'):
+		raise(Exception(f'Bad Extension: "{path}"'))
+
+	l = path.split(os.sep)
+	if depth:
+		l = l[-1*depth:]
+
+	if l[0] != MD_DIR:
+		raise(Exception(f'Bad path: "{path}"'))
+
+	l[0] = SITE_DIR
+	l[-1] = l[-1][:-3] + '.html'
+	return '/'.join(l)
+
 
 def get_title(md_path):
 	with open(md_path, 'r') as f:
 		title = f.readline().strip()
 
 	if (title is None) or (not len(title)):
-		title = 'Unknown'
+		return 'Unknown'
 
 	if len(title):
 		while title[0] in ('#', ' '):
@@ -52,41 +68,26 @@ def recurse(root, depth, string):
 	for directory in dirs:
 		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
 			continue
-		string += '\n'
-		string += '\t'*depth
-		string += f'<details><summary>{directory}</summary>'
+		string += f'\n<details><summary>{directory}</summary>'
 		string = recurse(os.path.join(root, directory), depth+1, string)
-		string += '\n'
-		string += '\t'*depth
-		string += '<hr>'
-		string += '\n'
-		string += '\t'*depth
-		string += '</details>'
+		string += '\n<hr>\n</details>'
 
 	if len(files):
-		string += '\n'
-		string += '\t'*depth
-		string += '<ul>'
+		string += '\n<ul>'
 
 	for f in files:
 		path = os.path.join(root, f)
 		title = get_title(path)
-		l = path.split(os.sep)
-		url = '/' + '/'.join(l[-1*depth-1:])
-		url = url.replace('.md', '.html')
-		string += '\n'
-		string += '\t'*(depth+1)
-		string += f'<li><a href="{url}">{title}</a></li>'
+		url = path_to_url(path, depth)
+		string += f'\n<li><a href="{url}">{title}</a></li>'
 
 	if len(files):
-		string += '\n'
-		string += '\t'*depth
-		string += '</ul>'
+		string += '\n</ul>'
 
 	return string
 
 
-def make_html(title, contents):
+def gen_html(title, contents):
 	return f'''<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -131,21 +132,20 @@ def make_html(title, contents):
 </html>'''
 
 
-def make_sitemap(site_root=SITE_ROOT, sitemap_path=SITEMAP_PATH):
-	sitemap = recurse(site_root, 0, '<h2>Notes</h2>\n<hr>')
+def make_sitemap(site_root=MD_DIR, sitemap_path=SITEMAP_PATH):
+	sitemap = recurse(site_root, 2, '<h2>Notes</h2>\n<hr>')
 	with open(sitemap_path, 'w') as fp:
 		fp.write(sitemap)
 
 
-def make_page(md_file):
-	assert(md_file.endswith('.md'))
+def make_page(md_path):
+	assert(md_path.endswith('.md'))
+	html_path = path_to_url(md_path)
+	print(f'  {md_path} ---> {html_path}')
 
-	html_file = md_file.replace('.md', '.html')
-	print(f'  {md_file} ---> {html_file}')
+	title = get_title(md_path)
 
-	title = get_title(md_file)
-
-	with open(md_file, 'r') as fin:
+	with open(md_path, 'r') as fin:
 		_ = fin.readline()
 		markdown = fin.read()
 
@@ -153,14 +153,17 @@ def make_page(md_file):
 			markdown,
 			'html5',
 			format='md')
+	html = gen_html(title, contents)
 
-	html = make_html(title, contents)
+	directory, _ = os.path.split(html_path)
+	if not os.path.isdir(directory):
+		os.makedirs(directory)
 
-	with open(html_file, 'w') as fp:
+	with open(html_path, 'w') as fp:
 		fp.write(html)
 
 
-def make_all(site_root=SITE_ROOT):
+def make_all(site_root=MD_DIR):
 	make_sitemap(site_root)
 
 	for root, _, files in os.walk(site_root):
@@ -168,8 +171,8 @@ def make_all(site_root=SITE_ROOT):
 			if not (f.endswith('.md') or f.endswith('.MD')):
 				continue
 
-			md_file = os.path.join(root, f)
-			make_page(md_file)
+			md_path = os.path.join(root, f)
+			make_page(md_path)
 
 
 if __name__ == '__main__':
@@ -177,4 +180,4 @@ if __name__ == '__main__':
 		for path in sys.argv[1:]:
 			make_page(path, SITE_DIR)
 	else:
-		make_all(SITE_ROOT)
+		make_all(MD_DIR)

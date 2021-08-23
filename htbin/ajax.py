@@ -8,27 +8,33 @@ import sys
 from build import make_all
 from build import make_page
 from build import make_sitemap
-from build import SITE_ROOT
 
 
-def target_to_path(target):
-	NOT_ALLOWED = ('..', '~', '$')
+def url_to_path(url):
+	NOT_ALLOWED = ('..', '~', '$', '//')
 
 	for pattern in NOT_ALLOWED:
-		if pattern in target:
-			raise Exception('Path contains "..".')
+		if pattern in url:
+			raise Exception(f'Illegal "{pattern}" in "{url}.')
 
-	assert(target.endswith('.md') or target.endswith('.MD'))
+	assert(url.endswith('.html'))
+	url = url[:-5] + '.md'
 
-	while target[0] == '/':
-		target = target[1:]
+	while url[0] == '/':
+		url = url[1:]
 
-	return target
+	l = url.split('/')
+	if not l[0] == 'site':
+		raise(Exception(f'URL bad start: "{url}"'))
+
+	l[0] = 'markdown'
+
+	return os.sep.join(l)
 
 
 def save_note(target, data):
 	assert(target is not None)
-	path = target_to_path(target)
+	path = url_to_path(target)
 	# assert(os.path.isfile(path))
 
 	if not data.endswith('\n'):
@@ -42,8 +48,8 @@ def save_note(target, data):
 	make_sitemap()
 
 
-def new_note(target):
-	path = target_to_path(target)
+def new_note(url):
+	path = url_to_path(url)
 	assert(not os.path.exists(path))
 	assert(path.endswith('.md') or path.endswith('.MD'))
 

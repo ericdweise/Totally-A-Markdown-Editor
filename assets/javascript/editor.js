@@ -1,4 +1,15 @@
+$.fn.urlToPath = function(target) {
+	var s = target.replace(new RegExp('.html$'), '.md');
+	return s.replace(new RegExp('site'), 'markdown');
+}
+
 $(document).ready(function(){
+	// Load site map
+	$.fn.loadSiteDir = function(){
+		$('#sidebar').load('/assets/sitemap.html')
+	}
+
+	$.fn.loadSiteDir();
 
 	/*** BUTTONS ***/
 	// Edit Button
@@ -8,21 +19,22 @@ $(document).ready(function(){
 		$('#view-menu').addClass('hidden');
 		$('#viewer').addClass('hidden');
 
-		var mdfile = window.location.pathname.replace(/\.html$/, '.md');
+		var mdfile = $.fn.urlToPath(window.location.pathname);
 		console.log("Loading Markdown: " + mdfile);
 		$.get(mdfile, function (data) {
-			$("#editor").html(data); // .replace(/\n/g,'&#10;'));
+			$("#editor").html(data);
 		});
 	});
 
 	// Add Note Button
 	$('#file').click(function() {
 		// Prompt user for new file
-		var target = prompt('Enter absolute path to new note','');
+		var target = prompt('Name of new note','');
 		if (target == null || target =='') {
 			alert('ERROR: Invalid target file');
 		}
-		if (!target.endsWith('.md')) {target += '.md';}
+		if (!target.endsWith('.html')) {target += '.html';}
+		target = '/site/' + target;
 		console.log('New note target: ' + target);
 
 		// Send AJAX
@@ -33,18 +45,21 @@ $(document).ready(function(){
 		xhr.open( 'post', '/htbin/ajax.py', true);
 		xhr.overrideMimeType('text/x-python');
 		xhr.send(form);
+
+		// Reload site-dir
+		$.fn.loadSiteDir();
 	});
 
 	// Save Button
 	$('#save').click(function() {
 		// Save editor content
-		var target = window.location.pathname.replace(/\.html$/, '.md');
+		var url = window.location.pathname;
 		var form = new FormData();
 		var data = $('#editor').text();
 		form.append('action', 'save')
-		form.append("data", data); // $('#editor').text().replace(/\n/g, '<br>'));
-		form.append("target", target);
-		console.log('Save note target: ' + target)
+		form.append("data", data);
+		form.append("target", url);
+		console.log('Save note target: ' + url)
 		var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
 		xhr.open( 'post', '/htbin/ajax.py', true );
 		xhr.overrideMimeType('text/x-python');
@@ -87,7 +102,4 @@ $(document).ready(function(){
 			this.focus();
 		}
 	});
-
-	// Load site map
-	$('#sidebar').load('/assets/sitemap.html')
 })
