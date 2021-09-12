@@ -13,7 +13,7 @@ _And_, we won't steal your data; It's all yours!
 (Just make sure to back it up...)
 
 
-# Installation
+# Installing TAME
 You only need two thing to run TAME on your computer:
 
 1. A modern web browser. Edge, Safari, and Firefox should all work.
@@ -42,27 +42,27 @@ From the root of the Git repository use this command:
 ./run
 ```
 
-## Building Your Notes Website
-As you add Markdown files to your notes directory you can rebuild the HTML files using:
-```bash
-./htbin/build.py
-```
 
+# Adding Notes
+There are several different ways to add your notes to TAME.
 
-# Writing Your Notes
 ## Adding Git Version Controlled Notes as a Submodule
 ```bash
-git submodule add <REPOSITORY_URL> markdown
+git submodule add <YOUR GIT REPOSITORY URL> markdown
 ```
 
 ## Copying Markdown Files
-Create a folder called `markdown` and add your Markdown files here.
+Create a folder called `markdown` in `TAME`'s root directory and add your Markdown files there.
 
-## TAME Specifics
-TAME stores your notes in Markdown files and displays them in your browser using HTML.
+## Start New Notes
+Click the "New Note" button and create your first Markdown note with `TAME`!
 
-The first line of your Markdown file will be used as the Note title.
-The title will be displayed in the site directory and at the top of the page when you open the note.
+
+# Some Things to Know About TAME
+1. TAME stores your notes in Markdown files and displays them in your browser using HTML.
+
+2. The first line of your Markdown file will be used as the Note title.
+    The title will be displayed in the site directory and at the top of the page when you open the note.
 
 
 # License
@@ -85,5 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Ongoing Work
 - New background photo
-- Add ajax response when a note has been successfully saved. Reload page after receipt, print error if there was an error.
 - Add arguments to `run`: bind addresses, port
+- Better path sanitization
+- Security review
+- Use pandoc to generate a Table of Contents
