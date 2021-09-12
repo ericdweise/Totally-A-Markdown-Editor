@@ -84,7 +84,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 # Ongoing Work
-- New background photo
 - Add arguments to `run`: bind addresses, port
 - Better path sanitization
 - Security review
