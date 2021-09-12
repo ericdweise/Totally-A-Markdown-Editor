@@ -8,6 +8,15 @@ import sys
 from build import make_all
 from build import make_page
 from build import make_sitemap
+from build import get_title
+
+
+MD_DIR = 'markdown'
+SKIP_DIRS = (
+		'.bak',
+		'.git',
+		'assets',
+		'htbin')
 
 
 def url_to_path(url):
@@ -65,6 +74,41 @@ def new_note(url):
 	make_sitemap()
 
 
+def sitedir(root, string):
+	dirs = []
+	files = []
+	for i in os.listdir(root):
+		if os.path.isdir(os.path.join(root, i)):
+			dirs.append(i)
+		elif os.path.isfile(os.path.join(root, i)):
+			if not i.endswith('.md'):
+				continue
+			files.append(i)
+
+	dirs.sort()
+	files.sort()
+
+	for directory in dirs:
+		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
+			continue
+		string += f'\n<details><summary>{directory}</summary>'
+		string = sitedir(os.path.join(root, directory), string)
+		string += '\n<hr>\n</details>'
+
+	if len(files):
+		string += '\n<ul>'
+
+	for f in files:
+		path = os.path.join(root, f)
+		title = get_title(path)
+		string += f'\n<li><a href="{path}">{title}</a></li>'
+
+	if len(files):
+		string += '\n</ul>'
+
+	return string
+
+
 if __name__ == '__main__':
 	form = cgi.FieldStorage()
 	action = form.getvalue('action', None)
@@ -77,6 +121,9 @@ if __name__ == '__main__':
 	elif action == 'new-note':
 		target = form.getvalue('target', None)
 		new_note(target)
+
+	elif action == 'site-directory':
+		print(sitedir(MD_DIR, ''))
 
 	else:
 		raise(Exception(f'Invalid action: "{action}"'))

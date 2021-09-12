@@ -3,12 +3,24 @@ $.fn.urlToPath = function(target) {
 	return s.replace(new RegExp('site'), 'markdown');
 }
 
-$(document).ready(function(){
-	// Load site map
-	$.fn.loadSiteDir = function(){
-		$('#sidebar').load('/assets/sitemap.html')
+$.fn.loadSiteDir = function() {
+	var form = new FormData();
+	form.append('action', 'site-directory');
+	var xhr = new XMLHttpRequest();
+
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == XMLHttpRequest.DONE) {
+			$("#directory").html(xhr.responseText);
+		}
 	}
 
+	xhr.open( 'post', '/htbin/ajax.py', true);
+	xhr.overrideMimeType('text/x-python');
+	xhr.send(form);
+};
+
+$(document).ready(function(){
+	// Load site map
 	$.fn.loadSiteDir();
 
 	/*** BUTTONS ***/
