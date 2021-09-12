@@ -78,15 +78,29 @@ $(document).ready(function(){
 		if (target == null || target =='') {
 			alert('ERROR: Invalid target file');
 		}
-		if (!target.endsWith('.html')) {target += '.html';}
-		target = '/site/' + target;
+
+		// Add directory and extension
+		if (!target.startsWith('markdown/')) {
+			target = 'markdown/' + target;
+		}
+		if (!target.endsWith('.md')) {
+			target = target + '.md';
+		}
 		console.log('New note target: ' + target);
 
 		// Send AJAX
 		var form = new FormData();
 		form.append('action', 'new-note');
 		form.append('target', target);
-		var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
+
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == XMLHttpRequest.DONE) {
+				$.fn.loadSiteDir();
+				$.fn.loadNote(target);
+			}
+		}
+
 		xhr.open( 'post', '/htbin/ajax.py', true);
 		xhr.overrideMimeType('text/x-python');
 		xhr.send(form);

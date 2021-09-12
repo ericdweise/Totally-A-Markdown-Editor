@@ -6,9 +6,6 @@ import pathlib
 import pypandoc
 import sys
 
-from build import make_all
-from build import make_page
-from build import make_sitemap
 from build import get_title
 
 
@@ -59,9 +56,6 @@ def new_note(path):
 	contents = 'New Note\n\n# Welcome\nAdd your thoughts here.\n'
 	with open(path, 'w') as fp:
 		fp.write(contents)
-
-	make_page(path)
-	make_sitemap()
 
 
 def sitedir(root, string):
