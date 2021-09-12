@@ -20,29 +20,22 @@ SKIP_DIRS = (
 		'htbin')
 
 
-def url_to_path(url):
+def sanitize_path(path):
 	NOT_ALLOWED = ('..', '~', '$', '//')
-
 	for pattern in NOT_ALLOWED:
-		if pattern in url:
-			raise Exception(f'Illegal "{pattern}" in "{url}.')
+		if pattern in path:
+			raise Exception(f'Illegal "{pattern}" in "{path}.')
 
-	assert(url.endswith('.html'))
-	url = url[:-5] + '.md'
+	while path[0] == '/':
+		path = path[1:]
 
-	while url[0] == '/':
-		url = url[1:]
-
-	l = url.split('/')
-	if not l[0] == 'site':
-		raise(Exception(f'URL bad start: "{url}"'))
-
-	l[0] = 'markdown'
+	l = path.split('/')
 
 	return os.sep.join(l)
 
 
 def save_note(target, data):
+	sanitize_path(target)
 	assert(target is not None)
 	assert(os.path.isfile(target))
 
@@ -54,8 +47,8 @@ def save_note(target, data):
 			fp.write(data)
 
 
-def new_note(url):
-	path = url_to_path(url)
+def new_note(path):
+	sanitize_path(path)
 	assert(not os.path.exists(path))
 	assert(path.endswith('.md') or path.endswith('.MD'))
 

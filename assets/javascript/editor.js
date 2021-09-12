@@ -1,10 +1,5 @@
 var mdfile = 'README.md'
 
-$.fn.urlToPath = function(target) {
-	var s = target.replace(new RegExp('.html$'), '.md');
-	return s.replace(new RegExp('site'), 'markdown');
-}
-
 $.fn.loadSiteDir = function() {
 	var form = new FormData();
 	form.append('action', 'site-directory');
