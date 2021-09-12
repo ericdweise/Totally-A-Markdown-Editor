@@ -3,6 +3,7 @@
 import cgi
 import os
 import pathlib
+import pypandoc
 import sys
 
 from build import make_all
@@ -101,7 +102,7 @@ def sitedir(root, string):
 	for f in files:
 		path = os.path.join(root, f)
 		title = get_title(path)
-		string += f'\n<li><a href="{path}">{title}</a></li>'
+		string += f'\n<li><a onclick="$.fn.loadNote(\'{path}\')">{title}</a></li>'
 
 	if len(files):
 		string += '\n</ul>'
@@ -123,7 +124,21 @@ if __name__ == '__main__':
 		new_note(target)
 
 	elif action == 'site-directory':
+		print("Content-Type: text/html")
+		print()
 		print(sitedir(MD_DIR, ''))
+
+	elif action == 'load-note':
+		note_path = form.getvalue('note-path')
+		with open(note_path, 'r') as fp:
+			mdstuff = fp.read()
+
+		print("Content-Type: text/html")
+		print()
+		print(pypandoc.convert_text(
+			mdstuff,
+			'html5',
+			format='md'))
 
 	else:
 		raise(Exception(f'Invalid action: "{action}"'))

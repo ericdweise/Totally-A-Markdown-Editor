@@ -1,3 +1,5 @@
+var mdfile = 'README.md'
+
 $.fn.urlToPath = function(target) {
 	var s = target.replace(new RegExp('.html$'), '.md');
 	return s.replace(new RegExp('site'), 'markdown');
@@ -6,8 +8,8 @@ $.fn.urlToPath = function(target) {
 $.fn.loadSiteDir = function() {
 	var form = new FormData();
 	form.append('action', 'site-directory');
-	var xhr = new XMLHttpRequest();
 
+	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			$("#directory").html(xhr.responseText);
@@ -19,9 +21,31 @@ $.fn.loadSiteDir = function() {
 	xhr.send(form);
 };
 
+$.fn.loadNote = function(path) {
+	mdfile = path;
+
+	var form = new FormData();
+	form.append('action', 'load-note');
+	form.append('note-path', mdfile);
+
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == XMLHttpRequest.DONE) {
+			$("#viewer").html(xhr.responseText);
+		}
+	}
+
+	xhr.open( 'post', '/htbin/ajax.py', true);
+	xhr.overrideMimeType('text/x-python');
+	xhr.send(form);
+};
+
 $(document).ready(function(){
 	// Load site map
 	$.fn.loadSiteDir();
+
+	// Load homepage
+	$.fn.loadNote(mdfile)
 
 	/*** BUTTONS ***/
 	// Edit Button
