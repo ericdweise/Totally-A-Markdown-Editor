@@ -6,8 +6,6 @@ import pathlib
 import pypandoc
 import sys
 
-from build import get_title
-
 
 MD_DIR = 'markdown'
 SKIP_DIRS = (
@@ -15,6 +13,23 @@ SKIP_DIRS = (
 		'.git',
 		'assets',
 		'htbin')
+
+
+def get_title(md_path):
+	with open(md_path, 'r') as f:
+		title = f.readline().strip()
+
+	if (title is None) or (not len(title)):
+		return 'Unknown'
+
+	if len(title):
+		while title[0] in ('#', ' '):
+			if len(title) > 1:
+				title = title[1:]
+			else:
+				title = 'Unknown'
+
+	return title
 
 
 def sanitize_path(path):
