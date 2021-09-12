@@ -103,14 +103,24 @@ $(document).ready(function(){
 	// Save Button
 	$('#save').click(function() {
 		// Save editor content
-		var url = window.location.pathname;
 		var form = new FormData();
 		var data = $('#editor').text();
 		form.append('action', 'save')
 		form.append("data", data);
-		form.append("target", url);
-		console.log('Save note target: ' + url)
-		var xhr = (window.XMLHttpRequest) ? new XMLHttpRequest() : new activeXObject("Microsoft.XMLHTTP");
+		form.append("target", mdfile);
+		console.log('Save note target: ' + mdfile)
+
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState == XMLHttpRequest.DONE) {
+				$('#edit-menu').addClass('hidden');
+				$('#editor').addClass('hidden');
+				$('#view-menu').removeClass('hidden');
+				$('#viewer').removeClass('hidden');
+				$.fn.loadNote(mdfile);
+			}
+		}
+
 		xhr.open( 'post', '/htbin/ajax.py', true );
 		xhr.overrideMimeType('text/x-python');
 		xhr.send(form);

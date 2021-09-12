@@ -44,18 +44,14 @@ def url_to_path(url):
 
 def save_note(target, data):
 	assert(target is not None)
-	path = url_to_path(target)
-	# assert(os.path.isfile(path))
+	assert(os.path.isfile(target))
 
 	if not data.endswith('\n'):
 		data += '\n'
 
-	if path:
-		with open(path,'w') as fp:
+	if target:
+		with open(target,'w') as fp:
 			fp.write(data)
-
-	make_page(path)
-	make_sitemap()
 
 
 def new_note(url):
