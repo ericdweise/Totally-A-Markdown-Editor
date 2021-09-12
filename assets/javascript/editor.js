@@ -55,8 +55,7 @@ $(document).ready(function(){
 		$('#view-menu').addClass('hidden');
 		$('#viewer').addClass('hidden');
 
-		var mdfile = $.fn.urlToPath(window.location.pathname);
-		console.log("Loading Markdown: " + mdfile);
+		console.log("Editing Markdown: " + mdfile);
 		$.get(mdfile, function (data) {
 			$("#editor").html(data);
 		});
