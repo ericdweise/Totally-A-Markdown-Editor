@@ -131,6 +131,7 @@ if __name__ == '__main__':
 	elif action == 'load-note':
 		note_path = form.getvalue('note-path')
 		with open(note_path, 'r') as fp:
+			_ = fp.readline()
 			mdstuff = fp.read()
 
 		print("Content-Type: text/html")
@@ -139,6 +140,13 @@ if __name__ == '__main__':
 			mdstuff,
 			'html5',
 			format='md'))
+
+	elif action == 'get-title':
+		note_path = form.getvalue('note-path')
+
+		print("Content-Type: text/html")
+		print()
+		print(get_title(note_path))
 
 	else:
 		raise(Exception(f'Invalid action: "{action}"'))

@@ -24,20 +24,35 @@ $.fn.loadSiteDir = function() {
 $.fn.loadNote = function(path) {
 	mdfile = path;
 
-	var form = new FormData();
-	form.append('action', 'load-note');
-	form.append('note-path', mdfile);
+	var titleForm = new FormData();
+	titleForm.append('action', 'get-title');
+	titleForm.append('note-path', mdfile);
 
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState == XMLHttpRequest.DONE) {
-			$("#viewer").html(xhr.responseText);
+	var titleXhr = new XMLHttpRequest();
+	titleXhr.onreadystatechange = function() {
+		if (titleXhr.readyState == XMLHttpRequest.DONE) {
+			$("#site-title").html(titleXhr.responseText);
 		}
 	}
 
-	xhr.open( 'post', '/htbin/ajax.py', true);
-	xhr.overrideMimeType('text/x-python');
-	xhr.send(form);
+	titleXhr.open( 'post', '/htbin/ajax.py', true);
+	titleXhr.overrideMimeType('text/x-python');
+	titleXhr.send(titleForm);
+
+	var contentForm = new FormData();
+	contentForm.append('action', 'load-note');
+	contentForm.append('note-path', mdfile);
+
+	var contentXhr = new XMLHttpRequest();
+	contentXhr.onreadystatechange = function() {
+		if (contentXhr.readyState == XMLHttpRequest.DONE) {
+			$("#viewer").html(contentXhr.responseText);
+		}
+	}
+
+	contentXhr.open( 'post', '/htbin/ajax.py', true);
+	contentXhr.overrideMimeType('text/x-python');
+	contentXhr.send(contentForm);
 };
 
 $(document).ready(function(){

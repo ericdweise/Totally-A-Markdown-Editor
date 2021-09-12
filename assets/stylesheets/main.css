@@ -126,7 +126,7 @@ button {
 
 
 /* HEADERS */
-p.site-title {
+p#site-title {
 	color: #2a6c6c;
 	font-size: 50px;
 	font-weight: bold;
