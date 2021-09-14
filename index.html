@@ -11,10 +11,11 @@
 		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body>
+	<div id="container">
 		<div id="header">
 			<p id="site-title"></p>
 		</div> <!-- header -->
-		<div id="container" class="clearfix">
+		<div id="middle" class="clearfix">
 			<div id="contents">
 				<div id="view-menu">
 					<button id="edit">Edit Markdown</button>
@@ -29,16 +30,16 @@
 				<div id="editor" contenteditable="true" class="hidden">
 				</div> <!-- id="editor" -->
 			</div> <!-- id="contents" -->
-			<div class="spacer"></div>
 			<div id="sidebar">
 				<h2>Notes</h2>
 				<hr>
 				<div id="directory"></div>
 			</div> <!-- id="sidebar" -->
-		</div> <!-- id="container" -->
+		</div> <!-- id="middle" -->
 		<div id="footer">
 			<p>This site is <a href="https://github.com/ericdweise/Totally-A-Markdown-Editor"><em>TAME! (Totally A Markdown Editor)</em></a></p>
 			<p>Handcrafted by &middot; <a href="https://ericdweise.com">Eric D. Weise</a></p>
 		</div> <!-- footer -->
+	<div> <!-- id="container" -->
 	</body>
 </html>

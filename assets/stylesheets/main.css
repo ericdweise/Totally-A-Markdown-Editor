@@ -8,44 +8,35 @@ html {
 	background-repeat: no-repeat;
 }
 body {
+	margin: 0;
+	padding: 0;
+	background-color: rgba(250,250,255,0.85);
+}
+div#container {
 	margin: auto;
 	max-width: 150ch;
 	color: #000000;
 }
-div#container {
+div#middle {
 	margin: 0;
 	padding: 0;
 	display: table;
 	width: 100%;
+	border-top: 1px solid #909090;
+	border-bottom: 1px solid #909090;
 }
 div#contents {
 	display: table-cell;
-	margin: 0;
-	padding: 1ch;
+	padding: 2ch;
 	width: 70%;
 	height: 100%;
-	border-radius: 2ch;
-	background-color: rgba(255,255,255,0.75);
-}
-div#spacer {
-	margin: 0;
-	padding: 0;
-	display: table-cell;
-	width: 5ch;
-	visibility:hidden;
 }
 div#sidebar {
 	display: table-cell;
-	margin: 0ch;
-	padding: 1ch;
-	width: 25%;
+	padding: 2ch;
+	width: 30%;
 	height: 100%;
-	border-radius: 2ch;
-	background-color: rgba(255,255,255,0.75);
-}
-div#viewer {
-	margin: 0;
-	padding: 0;
+	border-left: 1px solid #909090;
 }
 div#editor {
 	margin: 1ch;
@@ -57,12 +48,8 @@ div#editor {
 	white-space: pre-wrap;
 }
 div#header, div#footer {
-	margin: 2ch;
+	padding: 2ch;
 	clear: both;
-	border-radius: 2ch;
-	padding-top: 1ch;
-	padding-bottom: 1ch;
-	background-color: rgba(250,250,255,0.9);
 	text-align: center;
 }
 div.hidden {
@@ -98,6 +85,10 @@ div.hidden {
 	div#header, div#footer, div#contents, div#sidebar {
 		margin: 0;
 		margin-bottom: 2ch;
+	}
+	div#sidebar {
+		border: none;
+		border-top: 1px solid #909090;
 	}
 	div#header {
 		margin-top: 2ch;
