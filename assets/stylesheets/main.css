@@ -47,6 +47,7 @@ div#editor {
 	padding: 2ch;
 	min-height:20ch;
 	white-space: pre-wrap;
+	font-family: monospace;
 }
 div#header, div#footer {
 	padding: 2ch;
