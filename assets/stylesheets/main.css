@@ -142,6 +142,9 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+blockquote {
+	font-family: cursive;
+}
 
 /* INLINE CODE */
 code {
