@@ -92,18 +92,12 @@ def sitedir(root, string):
 			continue
 		string += f'\n<details><summary>{directory}</summary>'
 		string = sitedir(os.path.join(root, directory), string)
-		string += '\n<hr>\n</details>'
-
-	if len(files):
-		string += '\n<ul>'
+		string += '\n</details>'
 
 	for f in files:
 		path = os.path.join(root, f)
 		title = get_title(path)
-		string += f'\n<li><a onclick="$.fn.loadNote(\'{path}\')">{title}</a></li>'
-
-	if len(files):
-		string += '\n</ul>'
+		string += f'\n<p><a onclick="$.fn.loadNote(\'{path}\')">{title}</a></p>'
 
 	return string
 

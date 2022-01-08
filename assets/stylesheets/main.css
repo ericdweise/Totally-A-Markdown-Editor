@@ -116,6 +116,25 @@ button {
 	width: 16ch;
 	font-weight: bold;
 }
+details > details {
+	margin-left: 2ch;
+}
+details > summary {
+    list-style-type: "\2192\20";
+}
+details > summary:hover {
+	text-decoration: underline;
+}
+details[open] > summary {
+    list-style-type: "\2193\20";
+}
+details > p {
+	margin: 0;
+	margin-left: 2ch;
+}
+details[open] {
+	margin-bottom: 1ch;
+}
 
 
 /* HEADERS */
