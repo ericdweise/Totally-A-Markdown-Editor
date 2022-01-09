@@ -4,6 +4,7 @@ import cgi
 import os
 import pathlib
 import pypandoc
+import re
 import sys
 
 
@@ -73,6 +74,44 @@ def new_note(path):
 		fp.write(contents)
 
 
+def load_md_with_toc(note_path):
+	toc = []
+	contents = []
+	with open(note_path, 'r') as fp:
+		# Discard title line
+		_ = fp.readline()
+
+		# Load rest of note
+		for line in fp:
+			if line.startswith('#'):
+				heading = line.strip()
+				indent = -1
+				while heading.startswith('#'):
+					heading = heading[1:]
+					indent += 1
+				while heading[0] == ' ':
+					heading = heading[1:]
+				tag = heading.replace(' ', '-')
+				tag = re.sub('[^a-zA-Z0-9\-_]', '', tag)
+				tag = '#' + tag
+				toc.append('\t'*indent + f'- [{heading}]({tag})')
+
+			contents.append(line)
+
+	return '#Contents\n'.join(toc) + '\n' + ''.join(contents)
+
+
+def load_markdown(note_path):
+	with open(note_path, 'r') as fp:
+		# Discard title line
+		_ = fp.readline()
+
+		# Load rest of note
+		mdstuff = fp.read()
+
+	return mdstuff
+
+
 def sitedir(root, string):
 	dirs = []
 	files = []
@@ -122,9 +161,7 @@ if __name__ == '__main__':
 
 	elif action == 'load-note':
 		note_path = form.getvalue('note-path')
-		with open(note_path, 'r') as fp:
-			_ = fp.readline()
-			mdstuff = fp.read()
+		mdstuff = load_md_with_toc(note_path)
 
 		print("Content-Type: text/html")
 		print()
