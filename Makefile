@@ -32,7 +32,7 @@ install-tame:
 	cp tame $(TAME)
 	if ! [[ $(PATH) == *${TAME_DIR}* ]]; then \
 		echo '' >> "${HOME}/.profile"; \
-		echo PATH='"${TAME_DIR}:$$PATH"' >> "${HOME}/.profile"
+		echo PATH='"${TAME_DIR}:$$PATH"' >> "${HOME}/.profile" ;\
 	fi
 
 uninstall:
