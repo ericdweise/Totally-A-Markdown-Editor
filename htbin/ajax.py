@@ -93,12 +93,12 @@ def load_md_with_toc(note_path):
 					heading = heading[1:]
 				tag = heading.replace(' ', '-')
 				tag = re.sub('[^a-zA-Z0-9\-_]', '', tag)
-				tag = '#' + tag
+				tag = '#' + tag.lower()
 				toc.append('\t'*indent + f'- [{heading}]({tag})')
 
 			contents.append(line)
 
-	return '#Contents\n'.join(toc) + '\n' + ''.join(contents)
+	return '# Contents\n\n' + '\n'.join(toc) + '\n' + ''.join(contents)
 
 
 def load_markdown(note_path):
