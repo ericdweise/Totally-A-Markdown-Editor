@@ -98,7 +98,10 @@ def load_md_with_toc(note_path):
 
 			contents.append(line)
 
-	return '# Contents\n\n' + '\n'.join(toc) + '\n' + ''.join(contents)
+	if len(contents):
+		return '# Contents\n\n' + '\n'.join(toc) + '\n' + ''.join(contents)
+	else:
+		return ''
 
 
 def load_markdown(note_path):
