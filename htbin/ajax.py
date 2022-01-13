@@ -7,6 +7,8 @@ import pypandoc
 import re
 import sys
 
+from collections import OrderedDict
+
 
 MD_DIR = 'markdown'
 SKIP_DIRS = (
@@ -117,17 +119,20 @@ def load_markdown(note_path):
 
 def sitedir(root, string):
 	dirs = []
-	files = []
+	files = {}
 	for i in os.listdir(root):
 		if os.path.isdir(os.path.join(root, i)):
 			dirs.append(i)
 		elif os.path.isfile(os.path.join(root, i)):
 			if not i.endswith('.md'):
 				continue
-			files.append(i)
+			path = os.path.join(root, i)
+			title = get_title(path)
+			while title in files.keys():
+				title += ' [duplicate]'
+			files[title] = path
 
 	dirs.sort()
-	files.sort()
 
 	for directory in dirs:
 		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
@@ -136,10 +141,8 @@ def sitedir(root, string):
 		string = sitedir(os.path.join(root, directory), string)
 		string += '\n</details>'
 
-	for f in files:
-		path = os.path.join(root, f)
-		title = get_title(path)
-		string += f'\n<p><a onclick="$.fn.loadNote(\'{path}\')">{title}</a></p>'
+	for item in sorted(files.items()):
+		string += f'\n<p><a onclick="$.fn.loadNote(\'{item[1]}\')">{item[0]}</a></p>'
 
 	return string
 
