@@ -23,8 +23,8 @@ div#middle {
 	padding: 0;
 	display: table;
 	width: 100%;
-	border-top: 1px solid #909090;
-	border-bottom: 1px solid #909090;
+	border-top: 1px solid #000000;
+	border-bottom: 1px solid #000000;
 }
 div#contents {
 	display: table-cell;
@@ -37,7 +37,7 @@ div#sidebar {
 	padding: 2ch;
 	width: 30%;
 	height: 100%;
-	border-left: 1px solid #909090;
+	border-left: 1px solid #000000;
 }
 div#editor {
 	margin: 1ch;
@@ -90,7 +90,7 @@ div.hidden {
 	}
 	div#sidebar {
 		border: none;
-		border-top: 1px solid #909090;
+		border-top: 1px solid #000000;
 	}
 	div#header {
 		margin-top: 2ch;
