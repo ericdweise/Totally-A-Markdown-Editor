@@ -30,10 +30,8 @@ install-tame:
 		mkdir -p ${TAME_DIR}; \
 	fi
 	cp tame $(TAME)
-	if ! [[ $(PATH) == *${TAME_DIR}* ]]; then \
-		echo '' >> "${HOME}/.profile"; \
-		echo PATH='"${TAME_DIR}:$$PATH"' >> "${HOME}/.profile" ;\
-	fi
+	sudo apt install -y python3 python3-pip pandoc
+	pip3 install pypandoc
 
 uninstall:
 	rm -r $(SITE_DIR)
