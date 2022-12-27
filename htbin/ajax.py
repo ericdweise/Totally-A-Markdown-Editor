@@ -117,34 +117,33 @@ def load_markdown(note_path):
 	return mdstuff
 
 
-def sitedir(root, string):
+def sitedir(root, output):
 	dirs = []
 	files = {}
-	for i in os.listdir(root):
-		if os.path.isdir(os.path.join(root, i)):
-			dirs.append(i)
-		elif os.path.isfile(os.path.join(root, i)):
-			if not i.endswith('.md'):
+	for item in os.listdir(root):
+		if os.path.isdir(os.path.join(root, item)):
+			dirs.append(item)
+		elif os.path.isfile(os.path.join(root, item)):
+			if not item.endswith('.md'):
 				continue
-			path = os.path.join(root, i)
-			title = get_title(path)
+			filepath = os.path.join(root, item)
+			title = get_title(filepath)
 			while title in files.keys():
 				title += ' [duplicate]'
-			files[title] = path
+			files[title] = filepath
 
 	dirs.sort()
-
 	for directory in dirs:
 		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
 			continue
-		string += f'\n<details><summary>{directory}</summary>'
-		string = sitedir(os.path.join(root, directory), string)
-		string += '\n</details>'
+		output += f'\n<details><summary>{directory}</summary>'
+		output = sitedir(os.path.join(root, directory), output)
+		output += '\n</details>'
 
 	for item in sorted(files.items()):
-		string += f'\n<p><a onclick="$.fn.loadNote(\'{item[1]}\')">{item[0]}</a></p>'
+	    output += f'\n<p><a href="?path={item[1]}">{item[0]}</a></p>'
 
-	return string
+	return output
 
 
 if __name__ == '__main__':

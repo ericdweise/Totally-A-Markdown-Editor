@@ -1,5 +1,3 @@
-var mdfile = 'README.md'
-
 $.fn.loadSiteDir = function() {
 	var form = new FormData();
 	form.append('action', 'site-directory');
@@ -16,9 +14,7 @@ $.fn.loadSiteDir = function() {
 	xhr.send(form);
 };
 
-$.fn.loadNote = function(path) {
-	mdfile = path;
-
+$.fn.loadMarkdown = function(mdfile) {
 	var titleForm = new FormData();
 	titleForm.append('action', 'get-title');
 	titleForm.append('note-path', mdfile);
@@ -50,12 +46,22 @@ $.fn.loadNote = function(path) {
 	contentXhr.send(contentForm);
 };
 
+// Do when new page loads
 $(document).ready(function(){
+	// Get markdown path from url.search
+	const url = new URL(window.location.href);
+	var path = url.searchParams.get('path');
+
+	// Default path
+	if (path == null) {
+		path = 'README.md';
+	}
+
 	// Load site map
 	$.fn.loadSiteDir();
 
-	// Load homepage
-	$.fn.loadNote(mdfile)
+	// Load Markdown
+	$.fn.loadMarkdown(path)
 
 	/*** BUTTONS ***/
 	// Edit Button
@@ -97,7 +103,7 @@ $(document).ready(function(){
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == XMLHttpRequest.DONE) {
 				$.fn.loadSiteDir();
-				$.fn.loadNote(target);
+				$.fn.loadMarkdown(target);
 			}
 		}
 
@@ -126,7 +132,7 @@ $(document).ready(function(){
 				$('#editor').addClass('hidden');
 				$('#view-menu').removeClass('hidden');
 				$('#viewer').removeClass('hidden');
-				$.fn.loadNote(mdfile);
+				$.fn.loadMarkdown(mdfile);
 			}
 		}
 
