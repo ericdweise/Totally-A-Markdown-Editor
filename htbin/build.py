@@ -97,7 +97,7 @@ def gen_html(title, contents):
 		<link rel="stylesheet" href="/assets/stylesheets/main.css">
 		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-		<script src="/assets/javascript/editor.js"></script>
+		<script src="/assets/javascript/tame.js"></script>
 		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body>
