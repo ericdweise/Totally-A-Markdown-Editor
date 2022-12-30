@@ -166,7 +166,7 @@ if __name__ == '__main__':
 
 	elif action == 'load-note':
 		note_path = form.getvalue('note-path')
-		mdstuff = load_md_with_toc(note_path)
+		mdstuff = load_markdown(note_path)
 
 		print("Content-Type: text/html")
 		print()

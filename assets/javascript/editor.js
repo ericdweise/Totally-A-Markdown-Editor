@@ -14,6 +14,40 @@ $.fn.loadSiteDir = function() {
 	xhr.send(form);
 };
 
+$.fn.generateTableOfContents = function() {
+	var toc_arr = [];
+
+	function build_toc(item) {
+		function add_toc_item(header_item, depth) {
+			let url = new URL('#' + header_item.id, window.location);
+			var link = document.createElement("a");
+			link.href = url.toString();
+			link.text = header_item.innerText;
+
+			var par = document.createElement("p");
+			par.className = 'toc-item';
+			par.appendChild(link);
+
+			if (depth > 1) {
+				par.style.marginLeft = depth-1 + 'ch';
+			}
+
+			document.getElementById('tame-table-of-contents').appendChild(par);
+		}
+
+		if (item.localName != null && item.localName.length == 2 && item.localName.charAt(0) == 'h' && item.localName.charAt(1) >= '1' && item.localName.charAt(1) <= '6') {
+			add_toc_item(item, item.localName.charAt(1));
+		}
+	}
+
+	var hdr = document.createElement("h1");
+	hdr.textContent = "Contents";
+	document.getElementById('tame-table-of-contents').appendChild(hdr);
+
+	const vwr = $('#tame-file-contents');
+	vwr[0].childNodes.forEach(build_toc);
+};
+
 $.fn.loadMarkdown = function(mdfile) {
 	var titleForm = new FormData();
 	titleForm.append('action', 'get-title');
@@ -37,13 +71,15 @@ $.fn.loadMarkdown = function(mdfile) {
 	var contentXhr = new XMLHttpRequest();
 	contentXhr.onreadystatechange = function() {
 		if (contentXhr.readyState == XMLHttpRequest.DONE) {
-			$("#viewer").html(contentXhr.responseText);
+			$("#tame-file-contents").html(contentXhr.responseText);
 		}
 	}
 
 	contentXhr.open( 'post', '/htbin/ajax.py', true);
 	contentXhr.overrideMimeType('text/x-python');
 	contentXhr.send(contentForm);
+
+	contentXhr.onload = $.fn.generateTableOfContents;
 };
 
 // Do when new page loads

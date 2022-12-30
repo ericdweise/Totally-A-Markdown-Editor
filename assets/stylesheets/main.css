@@ -137,6 +137,11 @@ details[open] {
 }
 
 
+/* TABLE OF CONTENTS */
+p.toc-item {
+    margin: 0;
+}
+
 /* HEADERS */
 p#site-title {
 	color: #103838;
