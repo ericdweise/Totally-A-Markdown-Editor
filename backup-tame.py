@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+'''TAME is Totally A Markdown Editor
+'''
+
+import argparse
+import os
+import socket
+from http.server import HTTPServer
+from http.server import CGIHTTPRequestHandler
+
+
+SITE_DIR = os.path.join(os.environ['HOME'], '.tame')
+
+
+class HTTPServerV6(HTTPServer):
+	address_family = socket.AF_INET6
+
+
+def run(args):
+	'''Run a TAME server'''
+	bind_address = '127.0.0.1'
+	if args.ipv6:
+		bind_address = '0:0:0:0:0:0:0:1'
+	if args.bind is not None:
+		bind_address = args.bind
+
+	port = '8888'
+	if args.port is not None:
+		port = args.port
+
+	if args.ipv6:
+		server = HTTPServerV6((bind_address, port), CGIHTTPRequestHandler)
+	else:
+		server = HTTPServer((bind_address, port), CGIHTTPRequestHandler)
+
+	server.serve_forever()
+
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser(description=__doc__)
+	subparser = parser.add_subparsers(dest='command')
+
+	run_args = subparser.add_parser('run', help='Run TAME.')
+	run_args.add_argument('-d', '--directory', default=SITE_DIR,
+		help=f'Site root of the TAME. Default is {SITE_DIR}')
+	run_args.add_argument('-6', '--ipv6', action='store_true',
+		help='Serve TAME over IPv6 instead of IPv4')
+	run_args.add_argument('-p', '--port', type=int, default=8888,
+		help='Port to serve site from. Default: 8888')
+	run_args.add_argument('-b', '--bind',
+		help='Bind address. Default is localhost.')
+	run_args.add_argument('-e', '--editable',
+		help='Allow users to edit markdown files.',
+		action='store_true')
+
+	args = parser.parse_args()
+
+	if args.command == 'run':
+		assert(os.path.isdir(args.directory))
+		os.chdir(args.directory)
+		run(args)
+	else:
+		parser.parse_args(['-h'])

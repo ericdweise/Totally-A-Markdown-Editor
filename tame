@@ -1,61 +1,192 @@
 #!/usr/bin/env python3
 
-'''TAME is Totally A Markdown Editor
-'''
-
-import argparse
 import os
-import socket
-from http.server import HTTPServer
-from http.server import CGIHTTPRequestHandler
+import pypandoc
+import requests
+
+from flask import (
+	Flask,
+	render_template,
+	request,
+	send_from_directory,
+)
+from pathlib import Path
+
+app = Flask("tame")
 
 
-SITE_DIR = os.path.join(os.environ['HOME'], '.tame')
+SKIP_DIRS = (
+		'.bak',
+		'.git',
+		'assets',
+		'htbin')
 
 
-class HTTPServerV6(HTTPServer):
-	address_family = socket.AF_INET6
+DEFAULT_NOTE_PATH = Path("./README.md").resolve()
+NOTES_DIRECTORY = "/dev/null"
 
 
-def run(args):
-	'''Run a TAME server'''
-	bind_address = '127.0.0.1'
-	if args.ipv6:
-		bind_address = '0:0:0:0:0:0:0:1'
-	if args.bind is not None:
-		bind_address = args.bind
+############
+# FILE OPS #
+############
 
-	port = '8888'
-	if args.port is not None:
-		port = args.port
+def extract_title(md_path):
+	with open(md_path, 'r') as f:
+		title = f.readline().strip()
 
-	if args.ipv6:
-		server = HTTPServerV6((bind_address, port), CGIHTTPRequestHandler)
-	else:
-		server = HTTPServer((bind_address, port), CGIHTTPRequestHandler)
+	if (title is None) or (not len(title)):
+		return 'Unknown'
 
-	server.serve_forever()
+	if len(title):
+		while title[0] in ('#', ' '):
+			if len(title) > 1:
+				title = title[1:]
+			else:
+				title = 'Unknown'
+
+	return title
 
 
-if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description=__doc__)
-	subparser = parser.add_subparsers(dest='command')
+###############
+# GENERIC Ops #
+###############
 
-	run_args = subparser.add_parser('run', help='Run TAME.')
-	run_args.add_argument('-d', '--directory', default=SITE_DIR,
-		help=f'Site root of the TAME. Default is {SITE_DIR}')
-	run_args.add_argument('-6', '--ipv6', action='store_true',
-		help='Serve TAME over IPv6 instead of IPv4')
-	run_args.add_argument('-p', '--port', type=int, default=8888,
-		help='Port to serve site from. Default: 8888')
-	run_args.add_argument('-b', '--bind',
-		help='Bind address. Default is localhost.')
+# TODO: Assert path is inside of NOTES_DIRECTORY
+def sanitize_path(path):
+	NOT_ALLOWED = ('..', '~', '$', '//')
+	for pattern in NOT_ALLOWED:
+		if pattern in path:
+			raise Exception(f'Illegal "{pattern}" in "{path}.')
 
-	args = parser.parse_args()
+	while path[0] == '/':
+		path = path[1:]
 
-	if args.command == 'run':
-		assert(os.path.isdir(args.directory))
-		os.chdir(args.directory)
-		run(args)
-	else:
-		parser.parse_args(['-h'])
+	l = path.split('/')
+
+	return os.sep.join(l)
+
+
+###########
+# GET Ops #
+###########
+
+@app.route('/', methods=['GET'])
+def index():
+	return render_template('index.html')
+
+
+@app.route('/favicon.ico', methods=['GET'])
+def favicon():
+	return send_from_directory(
+		os.path.join(app.root_path, 'static'),
+		'favicon.ico',
+		mimetype='image/vnd.microsoft.icon')
+
+
+@app.route('/get-title', methods=['GET'])
+def get_note_title():
+	note_path = Path(os.path.join(
+		NOTES_DIRECTORY,
+		request.args.get('note')
+	)).resolve()
+	# TODO: sanitize note path
+
+	if not note_path.is_file():
+		note_path = DEFAULT_NOTE_PATH
+
+	return extract_title(note_path)
+
+
+@app.route("/load-note", methods=['GET'])
+def load_note():
+	note_path = Path(os.path.join(
+		NOTES_DIRECTORY,
+		request.args.get('note')
+	)).resolve()
+	# TODO: sanitize note path
+
+	if not note_path.is_file():
+		note_path = DEFAULT_NOTE_PATH
+
+	with note_path.open('r') as fp:
+		# Discard title line
+		_ = fp.readline()
+
+		# Load rest of note
+		mdstuff = fp.read()
+
+	# TODO: add tex
+	if note_path.suffix == ".md":
+		html_data = pypandoc.convert_text(
+		mdstuff,
+		'html5',
+		format='md')
+
+	return html_data
+
+
+@app.route("/site-directory", methods=['GET'])
+def sitedir():
+	dirs = []
+	files = {}
+	for item in NOTES_DIRECTORY.iterdir():
+		if item.is_dir():
+			dirs.append(item)
+		elif item.is_symlink():
+			continue
+		elif item.is_file():
+			if not item.suffix == '.md':
+				continue
+			try:
+				note = item.relative_to(NOTES_DIRECTORY)
+			except ValueError:
+				continue
+			title = extract_title(item)
+			while title in files.keys():
+				title += ' [duplicate]'
+			files[title] = note
+
+	output = ""
+	dirs.sort()
+	for directory in dirs:
+		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
+			continue
+		output += f'\n<details><summary>{directory}</summary>'
+		output = sitedir(os.path.join(root, directory), output)
+		output += '\n</details>'
+
+	for item in sorted(files.items()):
+		output += f'\n<p><a href="?note={item[1]}">{item[0]}</a></p>'
+
+	return output
+
+
+############
+# POST Ops #
+############
+
+# @app.route("/save", methods=['PUT'])
+# def save_note():
+# 	target = request.form.getvalue('target', None)
+# 	data = request.form.getvalue('data', None).replace('\r\n', '\n')
+# 
+# 	# TODO: Assert data is ascii
+# 
+# 	sanitize_path(target)
+# 	assert(target is not None)
+# 	assert(os.path.isfile(target))
+# 
+# 	if not data.endswith('\n'):
+# 		data += '\n'
+# 
+# 	if target:
+# 		with open(target, 'w') as fp:
+# 			fp.write(data)
+
+
+if __name__ == "__main__":
+	NOTES_DIRECTORY = Path("./markdown").resolve()
+	# TODO: add NOTES_DIRECTORY as argument
+	# TODO: check NOTES_DIRECTORY is a directory
+	app.run(debug=True)
+	# TODO: don't run in debug, but add as an argument
