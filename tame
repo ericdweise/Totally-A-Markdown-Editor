@@ -125,11 +125,12 @@ def load_note():
 	return html_data
 
 
-@app.route("/site-directory", methods=['GET'])
-def sitedir():
+def make_site_dir(directory):
 	dirs = []
 	files = {}
-	for item in NOTES_DIRECTORY.iterdir():
+	for item in directory.iterdir():
+		# item = item.resolve()   TODO
+		# TODO: assert item.is_relative_to(NOTES_DIRECTORY)
 		if item.is_dir():
 			dirs.append(item)
 		elif item.is_symlink():
@@ -149,16 +150,22 @@ def sitedir():
 	output = ""
 	dirs.sort()
 	for directory in dirs:
-		if directory.startswith('.') or directory.startswith('_') or directory in SKIP_DIRS:
+		if directory.name.startswith('.') or directory.name.startswith('_') or directory in SKIP_DIRS:
 			continue
-		output += f'\n<details><summary>{directory}</summary>'
-		output = sitedir(os.path.join(root, directory), output)
+
+		output += f'\n<details><summary>{directory.name}</summary>'
+		output += make_site_dir(directory)
 		output += '\n</details>'
 
 	for item in sorted(files.items()):
 		output += f'\n<p><a href="?note={item[1]}">{item[0]}</a></p>'
 
 	return output
+
+
+@app.route("/site-directory", methods=['GET'])
+def sitedir():
+	return make_site_dir(NOTES_DIRECTORY)
 
 
 ############
