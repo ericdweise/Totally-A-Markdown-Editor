@@ -1,3 +1,6 @@
+# Instance files
+auth.db
+
 # vim files
 *.swp
 *.swo

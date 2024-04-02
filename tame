@@ -3,28 +3,92 @@
 import argparse
 import os
 import pypandoc
-import requests
 
 from flask import (
+	Blueprint,
 	Flask,
+	flash,
+	redirect,
 	render_template,
 	request,
 	send_from_directory,
+	url_for,
+)
+from flask_login import (
+	LoginManager,
+	login_required,
+	login_user,
+	logout_user,
 )
 from pathlib import Path
+from sqlalchemy import select
+from uuid import uuid4
 
-app = Flask("tame")
+from database import (
+	db_session,
+	init_db,
+)
+from models import User
 
 
 SKIP_DIRS = (
-		'.bak',
-		'.git',
-		'assets',
-		'htbin')
-
+	'.bak',
+	'.git',
+	'assets',
+	'htbin'
+)
 
 DEFAULT_NOTE_PATH = Path("./README.md").resolve()
 NOTES_DIRECTORY = "/dev/null"
+
+
+# Create Blueprints
+main_bp = Blueprint("main", "tame")
+auth_bp = Blueprint("auth", "tame")
+
+
+############
+# USER OPS #
+############
+
+@auth_bp.route("/login", methods=["GET"])
+def login():
+	return render_template("login.html")
+
+
+@auth_bp.route("/login", methods=["POST"])
+def login_post():
+	username = request.form.get('username')
+	password = request.form.get('password')
+	remember = True if request.form.get('remember') else False
+
+	statement = select(User).filter_by(username=username)
+	# e = db_session.execute(statement)
+	user = None
+	try:
+		user = db_session.scalars(statement).one()
+	except Exception:
+		print("FAILED TO GET USER")
+		return login_fail()
+
+	if not user or not user.check_password(password):
+		print(f"PW check: {user.check_password(password)}")
+		return login_fail()
+
+	login_user(user, remember=remember)
+	return redirect("/")
+
+
+def login_fail():
+	flash('Please check your login details and try again.')
+	return redirect(url_for('auth.login'))
+
+
+@auth_bp.route("/logout")
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for("auth_bp.login"))
 
 
 ############
@@ -62,29 +126,31 @@ def sanitize_path(path):
 	while path[0] == '/':
 		path = path[1:]
 
-	l = path.split('/')
+	path_parts = path.split('/')
 
-	return os.sep.join(l)
+	return os.sep.join(path_parts)
 
 
 ###########
 # GET Ops #
 ###########
 
-@app.route('/', methods=['GET'])
+@main_bp.route('/', methods=['GET'])
+@login_required
 def index():
 	return render_template('index.html')
 
 
-@app.route('/favicon.ico', methods=['GET'])
+@main_bp.route('/favicon.ico', methods=['GET'])
 def favicon():
 	return send_from_directory(
-		os.path.join(app.root_path, 'static'),
+		os.path.join(main_bp.root_path, 'static'),
 		'favicon.ico',
 		mimetype='image/vnd.microsoft.icon')
 
 
-@app.route('/get-title', methods=['GET'])
+@main_bp.route('/get-title', methods=['GET'])
+@login_required
 def get_note_title():
 	note_path = Path(os.path.join(
 		NOTES_DIRECTORY,
@@ -98,7 +164,8 @@ def get_note_title():
 	return extract_title(note_path)
 
 
-@app.route("/load-note", methods=['GET'])
+@main_bp.route("/load-note", methods=['GET'])
+@login_required
 def load_note():
 	note_path = Path(os.path.join(
 		NOTES_DIRECTORY,
@@ -119,9 +186,10 @@ def load_note():
 	# TODO: add tex
 	if note_path.suffix == ".md":
 		html_data = pypandoc.convert_text(
-		mdstuff,
-		'html5',
-		format='md')
+			mdstuff,
+			'html5',
+			format='md'
+		)
 
 	return html_data
 
@@ -164,32 +232,61 @@ def make_site_dir(directory):
 	return output
 
 
-@app.route("/site-directory", methods=['GET'])
+@main_bp.route("/site-directory", methods=['GET'])
+@login_required
 def sitedir():
 	return make_site_dir(NOTES_DIRECTORY)
 
+
+@main_bp.route("/profile", methods=['GET'])
+@login_required
+def profile():
+	return render_template("profile.html")
 
 ############
 # POST Ops #
 ############
 
-# @app.route("/save", methods=['PUT'])
+# @main_bp.route("/save", methods=['PUT'])
 # def save_note():
 # 	target = request.form.getvalue('target', None)
 # 	data = request.form.getvalue('data', None).replace('\r\n', '\n')
-# 
+#
 # 	# TODO: Assert data is ascii
-# 
+#
 # 	sanitize_path(target)
 # 	assert(target is not None)
 # 	assert(os.path.isfile(target))
-# 
+#
 # 	if not data.endswith('\n'):
 # 		data += '\n'
-# 
+#
 # 	if target:
 # 		with open(target, 'w') as fp:
 # 			fp.write(data)
+
+
+def create_app():
+	app = Flask("tame")
+
+	app.config['SECRET_KEY'] = uuid4().hex
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///auth.db'
+
+	login_manager = LoginManager()
+	login_manager.login_view = 'auth.login'
+	login_manager.init_app(app)
+
+	@login_manager.user_loader
+	def load_user(user_id):
+		return User.query.get(int(user_id))
+
+	# blueprint for auth routes
+	app.register_blueprint(auth_bp)
+
+	# blueprint for non-auth routes
+	app.register_blueprint(main_bp)
+
+	return app
 
 
 if __name__ == "__main__":
@@ -202,8 +299,17 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	NOTES_DIRECTORY = Path(args.notes_directory).resolve()
-	assert(NOTES_DIRECTORY.is_dir())
+	assert NOTES_DIRECTORY.is_dir()
 	print(f"SERVING NOTES DIRECTORY: {NOTES_DIRECTORY}")
+
+	app = create_app()
+
+	@app.teardown_appcontext
+	def shutdown_session(exception=None):
+		db_session.remove()
+
+	# Init DB file
+	init_db()
 
 	app.run(debug=True)
 	# TODO: don't run in debug, but add as an argument
