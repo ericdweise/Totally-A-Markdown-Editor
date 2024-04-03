@@ -138,7 +138,13 @@ def sanitize_path(path):
 @main_bp.route('/', methods=['GET'])
 @login_required
 def index():
-    return render_template('index.html')
+    return redirect("/view")
+
+
+@main_bp.route('/view', methods=['GET'])
+@login_required
+def view_note():
+    return render_template('view.html')
 
 
 @main_bp.route('/favicon.ico', methods=['GET'])
@@ -227,7 +233,8 @@ def make_site_dir(directory):
         output += '\n</details>'
 
     for item in sorted(files.items()):
-        output += f'\n<p><a href="?note={item[1]}">{item[0]}</a></p>'
+        # output += f'\n<p><a href="/view?note={item[1]}">{item[0]}</a></p>'
+        output += f'\n<p><button class="sitedir" onclick="$.fn.changeNote(\'{item[1]}\')">{item[0]}</button></p>'
 
     return output
 

@@ -106,7 +106,7 @@ hr {
 	height: 1px;
 	background-color: #909090;
 }
-button {
+button.blocky {
 	margin: 0.5ch;
 	color: #ffffff;
 	background-color: #103838;
@@ -115,6 +115,15 @@ button {
 	padding: 0.5ch;
 	width: 16ch;
 	font-weight: bold;
+}
+button.sitedir {
+	color: #2a6c6c;
+	text-decoration: none;
+    border: none;
+
+} 
+button.sitedir:hover {
+	text-decoration: underline;
 }
 details > details {
 	margin-left: 2ch;

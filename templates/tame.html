@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>TAME is Totally A Markdown Editor!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/stylesheets/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="/static/javascript/tame.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      {% block body %}
+      {% endblock %}
+      <div id="footer">
+        <p>This site is <a href="https://github.com/ericdweise/Totally-A-Markdown-Editor"><em>TAME! (Totally A Markdown Editor)</em></a></p>
+        <p>Handcrafted by &middot; <a href="https://ericdweise.com">Eric D. Weise</a></p>
+      </div> <!-- footer -->
+    <div> <!-- id="container" -->
+  </body>
+</html>

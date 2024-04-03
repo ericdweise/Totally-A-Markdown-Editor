@@ -1,6 +1,5 @@
 // TODO: only reload when cache is off
 $.fn.loadSiteDir = function() {
-
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
@@ -12,7 +11,7 @@ $.fn.loadSiteDir = function() {
 	xhr.send();
 };
 
-$.fn.generateTableOfContents = function() {
+$.fn.buildTOC = function() {
 	var toc_arr = [];
 
 	function build_toc(item) {
@@ -38,24 +37,38 @@ $.fn.generateTableOfContents = function() {
 		}
 	}
 
+    let targetDiv = document.getElementById('tame-table-of-contents');
+
+    // Clear current ToC
+    targetDiv.innerHTML = "";
+
+    // Add new ToC
 	var hdr = document.createElement("h1");
 	hdr.textContent = "Contents";
-	document.getElementById('tame-table-of-contents').appendChild(hdr);
+	targetDiv.appendChild(hdr);
 
 	const vwr = $('#tame-file-contents');
 	vwr[0].childNodes.forEach(build_toc);
 };
 
-$.fn.loadMarkdown = function(mdfile) {
-    console.log("LOAD MDFILE: " + mdfile);
+
+$.fn.changeNote = function(path) {
     // Update history with new note
     let stateObj = { id: "100" };
     window.history.pushState(
         stateObj,
         "",
-        "/?note=" + mdfile
+        "/view?note=" + path
     );
+    $.fn.viewNote();
+};
 
+$.fn.viewNote = function() {
+	// Get markdown path from url.search
+	const url = new URL(window.location.href);
+	var path = url.searchParams.get('note');
+
+    // Get note's title
 	var titleXhr = new XMLHttpRequest();
 	titleXhr.onreadystatechange = function() {
 		if (titleXhr.readyState == XMLHttpRequest.DONE) {
@@ -63,9 +76,10 @@ $.fn.loadMarkdown = function(mdfile) {
 		}
 	}
 
-	titleXhr.open( 'GET', '/get-title?note=' + mdfile, true);
+	titleXhr.open( 'GET', '/get-title?note=' + path, true);
 	titleXhr.send();
 
+    // Get note contents
 	var contentXhr = new XMLHttpRequest();
 	contentXhr.onreadystatechange = function() {
 		if (contentXhr.readyState == XMLHttpRequest.DONE) {
@@ -73,144 +87,67 @@ $.fn.loadMarkdown = function(mdfile) {
 		}
 	}
 
-	contentXhr.open( 'GET', '/load-note?note=' + mdfile, true);
+	contentXhr.open( 'GET', '/load-note?note=' + path, true);
 	contentXhr.send();
 
-	contentXhr.onload = $.fn.generateTableOfContents;
+    // Generate Table of Contents for note
+	contentXhr.onload = $.fn.buildTOC;
+};
+
+$.fn.editNote = function() {
+    // TODO: Add this to "on-click" of the "Edit Note" button
+    alert('Edit Note button click...');
+};
+
+$.fn.newNote = function() {
+    // TODO: Add this to "on-click" of the "New Note" button
+
+    // Prompt user for new file
+    var target = prompt('Name of new note','');
+    console.log('New note target: ' + target);
+
+    // Send AJAX, wait for response
+    // TODO: Write the "new-note" POST endpoint
+    var form = new FormData();
+    form.append('target', target);
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            // Reload site directory so it includes new file
+            $.fn.loadSiteDir();
+
+            // View new note (will be empty)
+            $.fn.viewNote();
+
+            // Open the editor
+            $.fn.editNote();
+        } else {
+            alert("Failed to create new note at " + target);
+        }
+    }
+
+    // TODO: is this right?
+    xhr.open('post', '/new-note', true);
+    xhr.send(form);
+};
+
+$.fn.saveNote = function() {
+    // TODO: this...
+    alert('Save Note button click...');
+};
+
+$.fn.abortEdit = function() {
+    // TODO: this...
+    alert('Abort Edit button click...');
 };
 
 // Do when new page loads
-$(document).ready(function(){
-	// Get markdown path from url.search
-	const url = new URL(window.location.href);
-    console.log("URL Search params: " + url.searchParams);
-	var path = url.searchParams.get('note');
-
-    console.log();
-	// Default path
-	if (path == null) {
-        console.log();
-		path = 'README.md';
-	}
-
-	// Load site map
-	$.fn.loadSiteDir();
-
-	// Load Markdown
-	$.fn.loadMarkdown(path)
-
-	/*** BUTTONS ***/
-	// Edit Button
-	$('#edit').click(function() {
-		$('#edit-menu').removeClass('hidden');
-		$('#editor').removeClass('hidden');
-		$('#view-menu').addClass('hidden');
-		$('#viewer').addClass('hidden');
-
-		console.log("Editing Markdown: " + mdfile);
-		$.get(mdfile, function (data) {
-			$("#editor").html(data);
-		});
-	});
-
-	// Add Note Button
-	$('#file').click(function() {
-		// Prompt user for new file
-		var target = prompt('Name of new note','');
-		if (target == null || target =='') {
-			alert('ERROR: Invalid target file');
-		}
-
-		// Add directory and extension
-		if (!target.startsWith('markdown/')) {
-			target = 'markdown/' + target;
-		}
-		if (!target.endsWith('.md')) {
-			target = target + '.md';
-		}
-		console.log('New note target: ' + target);
-
-		// Send AJAX
-		var form = new FormData();
-		form.append('action', 'new-note');
-		form.append('target', target);
-
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == XMLHttpRequest.DONE) {
-				$.fn.loadSiteDir();
-				$.fn.loadMarkdown(target);
-			}
-		}
-
-		xhr.open( 'post', '/htbin/ajax.py', true);
-		xhr.overrideMimeType('text/x-python');
-		xhr.send(form);
-
-		// Reload site-dir
-		$.fn.loadSiteDir();
-	});
-
-	// Save Button
-	$('#save').click(function() {
-		// Save editor content
-		var form = new FormData();
-		var data = $('#editor').text();
-		form.append('action', 'save')
-		form.append("data", data);
-		form.append("target", mdfile);
-		console.log('Save note target: ' + mdfile);
-
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == XMLHttpRequest.DONE) {
-				$('#edit-menu').addClass('hidden');
-				$('#editor').addClass('hidden');
-				$('#view-menu').removeClass('hidden');
-				$('#viewer').removeClass('hidden');
-				$.fn.loadMarkdown(mdfile);
-			}
-		}
-
-		xhr.open( 'post', '/htbin/ajax.py', true );
-		xhr.overrideMimeType('text/x-python');
-		xhr.send(form);
-	});
-
-	// Abort Button
-	$('#abort').click(function() {
-		$('#edit-menu').addClass('hidden');
-		$('#editor').addClass('hidden');
-		$('#view-menu').removeClass('hidden');
-		$('#viewer').removeClass('hidden');
-	});
-
-	/*** IMPLICIT BEHAVIOR ***/
-	// listen for <Enter>, insert "\n" instead of default behavior
-	document.getElementById('editor').addEventListener('keypress', function(e) {
-		if (e.which == 13) { // Listen for <Enter> key
-			// Override default behavior of <Enter>
-			e.preventDefault();
-
-			var selection = window.getSelection();
-			var range = selection.getRangeAt(0);
-			var textNode = document.createTextNode('\n');
-
-			// Replace text (if selected) and insert newline character
-			range.deleteContents();
-			range.collapse(false);
-			range.insertNode(textNode);
-			range.selectNodeContents(textNode);
-
-			// Create a range storing the new cursor position
-			var newRange = document.createRange();
-			newRange.setStartAfter(textNode, 0);
-			newRange.collapse(false);
-
-			// Clear old range and add new range with cursor position
-			selection.removeAllRanges();
-			selection.addRange(newRange);
-			this.focus();
-		}
-	});
+$(document).ready(function() {
+    if (document.location.pathname == '/view') {
+        $.fn.loadSiteDir();
+        $.fn.viewNote();
+    } else if (document.location.pathname == '/edit') {
+        $.fn.prepareEditNotePage();
+    }
 })

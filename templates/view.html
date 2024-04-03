@@ -1,0 +1,26 @@
+{% extends "tame.html" %}
+{% block body %}
+  <div id="header">
+    <p id="site-title"></p>
+  </div> <!-- header -->
+  <div id="middle" class="clearfix">
+    <div id="contents">
+      <div id="view-menu">
+        <button class="blocky" id="edit">Edit Markdown</button>
+        <button class="blocky" id="file">New Note</button>
+      </div> <!-- id="view-menu" -->
+      <div id="viewer">
+        <div id="tame-table-of-contents">
+        </div>
+        <hr>
+        <div id="tame-file-contents">
+        </div>
+      </div> <!-- id="viewer" -->
+    </div> <!-- id="contents" -->
+    <div id="sidebar">
+      <h2>Notes</h2>
+      <hr>
+      <div id="directory"></div>
+    </div> <!-- id="sidebar" -->
+  </div> <!-- id="middle" -->
+{% endblock body %}
