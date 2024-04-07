@@ -42,7 +42,8 @@ $.fn.buildTOC = function() {
     targetDiv.innerHTML = "";
 
     // Add new ToC
-	var hdr = document.createElement("h1");
+	var hdr = document.createElement("p");
+    hdr.classList.add("sec-title");
 	hdr.textContent = "Contents";
 	targetDiv.appendChild(hdr);
 
@@ -67,11 +68,14 @@ $.fn.viewNote = function() {
 	const url = new URL(window.location.href);
 	var path = url.searchParams.get('note');
 
+    // Set note-path
+    $("#note-path").html(path)
+
     // Get note's title
 	var titleXhr = new XMLHttpRequest();
 	titleXhr.onreadystatechange = function() {
 		if (titleXhr.readyState == XMLHttpRequest.DONE) {
-			$("#site-title").html(titleXhr.responseText);
+			$("#note-title").html(titleXhr.responseText);
 		}
 	}
 
