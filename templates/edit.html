@@ -1,0 +1,11 @@
+{% extends "tame.html" %}
+{% block body %}
+
+  <div id="edit-menu">
+    <button class="blocky" id="save" onclick="$.fn.saveNote()">Save</button>
+    <button class="blocky" id="abort" onclick="$.fn.abortEdit()">Abort</button>
+  </div> <!-- id="edit-menu" -->
+<div id="editor" contenteditable="true">
+</div> <!-- id="editor" -->
+
+{% endblock body %}

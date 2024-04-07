@@ -1,4 +1,3 @@
-// TODO: only reload when cache is off
 $.fn.loadSiteDir = function() {
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
@@ -95,8 +94,25 @@ $.fn.viewNote = function() {
 };
 
 $.fn.editNote = function() {
-    // TODO: Add this to "on-click" of the "Edit Note" button
-    alert('Edit Note button click...');
+    let url = new URL(window.location.href);
+    url.pathname = 'edit';
+    window.location.replace(url.href);
+};
+
+$.fn.getRawNote = function() {
+	const url = new URL(window.location.href);
+	var path = url.searchParams.get('note');
+
+    // Get raw note contents
+	var contentXhr = new XMLHttpRequest();
+	contentXhr.onreadystatechange = function() {
+		if (contentXhr.readyState == XMLHttpRequest.DONE) {
+			$("#editor").html(contentXhr.responseText);
+		}
+	}
+
+	contentXhr.open( 'GET', '/load-raw?note=' + path, true);
+	contentXhr.send();
 };
 
 $.fn.newNote = function() {
@@ -133,13 +149,34 @@ $.fn.newNote = function() {
 };
 
 $.fn.saveNote = function() {
-    // TODO: this...
-    alert('Save Note button click...');
+	const url = new URL(window.location.href);
+	var path = url.searchParams.get('note');
+
+    let raw_data = document.getElementById("editor").innerText;
+
+    var form = new FormData();
+    form.append('note', path);
+    form.append('raw', raw_data);
+
+	var xhr = new XMLHttpRequest();
+	xhr.onloadend = function() {
+		if (xhr.status == 201) {
+            let url = new URL(window.location.href);
+            url.pathname = 'view';
+            window.location.replace(url.href);
+		} else {
+            alert("Save was unsuccessful.");
+        }
+	}
+
+    xhr.open('post', '/save', true);
+    xhr.send(form);
 };
 
 $.fn.abortEdit = function() {
-    // TODO: this...
-    alert('Abort Edit button click...');
+    let url = new URL(window.location.href);
+    url.pathname = 'view';
+    window.location.replace(url.href);
 };
 
 // Do when new page loads
@@ -148,6 +185,6 @@ $(document).ready(function() {
         $.fn.loadSiteDir();
         $.fn.viewNote();
     } else if (document.location.pathname == '/edit') {
-        $.fn.prepareEditNotePage();
+        $.fn.getRawNote();
     }
 })

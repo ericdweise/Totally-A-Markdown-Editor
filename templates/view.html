@@ -6,7 +6,7 @@
   <div id="middle" class="clearfix">
     <div id="contents">
       <div id="view-menu">
-        <button class="blocky" id="edit">Edit Markdown</button>
+        <button class="blocky" id="edit" onclick="$.fn.editNote()">Edit Markdown</button>
         <button class="blocky" id="file">New Note</button>
       </div> <!-- id="view-menu" -->
       <div id="viewer">
@@ -23,4 +23,5 @@
       <div id="directory"></div>
     </div> <!-- id="sidebar" -->
   </div> <!-- id="middle" -->
+  {% include 'footer.html' %}
 {% endblock body %}
