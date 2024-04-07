@@ -85,6 +85,9 @@ div.flex-parent {
 div.flex-child {
     flex: 1;
 }
+div.text-align-right {
+    text-align: right;
+}
 .clearfix:before, .clearfix:after {
 	content: '\0020';
 	display: block;

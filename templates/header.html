@@ -1,3 +1,10 @@
-<div id="header">
+<div id="header" class="flex-parent">
+  <div class="flex-child">
     <p id="site-name">TAME is Totally A Markdown Editor</p>
+  </div>
+  <div class="flex-child text-align-right">
+    <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+      Logout
+    </a>
+  </div>
 </div>
