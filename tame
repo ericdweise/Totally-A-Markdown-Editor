@@ -81,7 +81,7 @@ def login_post():
 
 
 def login_fail():
-    flash('Please check your login details and try again.')
+    flash('Invalid login')
     return redirect(url_for('auth.login'))
 
 

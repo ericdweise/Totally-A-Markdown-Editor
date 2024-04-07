@@ -1,8 +1,8 @@
-{% extends "account.html" %}
-{% block content %}
-<div class="column is-4 is-offset-4">
- <h3 class="title">Login to TAME</h3>
- <div class="box">
+{% extends "tame.html" %}
+{% block body %}
+<div id="login-container">
+ <div id="login-box">
+  <h3 class="title">Login to TAME</h3>
   {% with messages = get_flashed_messages() %}
    {% if messages %}
     <div>
@@ -11,26 +11,26 @@
    {% endif %}
   {% endwith %}
   <form id="loginForm" method="POST" action="/login">
-   <div class="field">
+   <div class="login-field">
     <div class="control">
      <input class="input is-large" type="username" name="username" placeholder="Username" autofocus="">
     </div>
    </div>
-   <div class="field">
+   <div class="login-field">
     <div class="control">
      <input id="password" class="input is-large" type="password" name="password" placeholder="Password">
     </div>
    </div>
-   <div class="field">
+   <div class="login-field">
     <label class="checkbox">
       <input type="checkbox" name="remember">
       Remember me
     </label>
    </div>
-   <button class="button is-block is-info is-large is-fullwidth">
+   <button class="blocky">
     Login
    </button>
   </form>
  </div>
 </div>
-{% endblock content %}
+{% endblock body %}
