@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
-import pypandoc
 
 from flask import (
     Blueprint,
@@ -21,7 +19,6 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from pathlib import Path
 from sqlalchemy import select
 from uuid import uuid4
 
@@ -30,17 +27,13 @@ from database import (
     init_db,
 )
 from models import User
-
-
-SKIP_DIRS = (
-    '.bak',
-    '.git',
-    'assets',
-    'htbin'
+from note_ops import (
+    make_site_dir,
+    render_note,
+    read_note_title,
+    read_raw_note,
+    save_note,
 )
-
-DEFAULT_NOTE_PATH = Path("./README.md").resolve()
-NOTES_DIRECTORY = "/dev/null"
 
 
 # Create Blueprints
@@ -89,52 +82,12 @@ def login_fail():
 @login_required
 def logout():
     logout_user()
-    return redirect("/login")
+    return redirect("auth.login")
 
 
-############
-# FILE OPS #
-############
-
-def extract_title(md_path):
-    with open(md_path, 'r') as f:
-        title = f.readline().strip()
-
-    if (title is None) or (not len(title)):
-        return 'Unknown'
-
-    if len(title):
-        while title[0] in ('#', ' '):
-            if len(title) > 1:
-                title = title[1:]
-            else:
-                title = 'Unknown'
-
-    return title
-
-
-###############
-# GENERIC Ops #
-###############
-
-# TODO: Assert path is inside of NOTES_DIRECTORY
-def sanitize_path(path):
-    NOT_ALLOWED = ('..', '~', '$', '//')
-    for pattern in NOT_ALLOWED:
-        if pattern in path:
-            raise Exception(f'Illegal "{pattern}" in "{path}.')
-
-    while path[0] == '/':
-        path = path[1:]
-
-    path_parts = path.split('/')
-
-    return os.sep.join(path_parts)
-
-
-###########
-# GET Ops #
-###########
+##########################
+# Routes hidden by login #
+##########################
 
 @main_bp.route('/', methods=['GET'])
 @login_required
@@ -162,159 +115,48 @@ def favicon():
         mimetype='image/vnd.microsoft.icon')
 
 
+# TODO: wrap in to load-note endpoint
 @main_bp.route('/get-title', methods=['GET'])
 @login_required
 def get_note_title():
-    note_path = Path(os.path.join(
-        NOTES_DIRECTORY,
-        request.args.get('note')
-    )).resolve()
-    # TODO: sanitize note path
-
-    if not note_path.is_file():
-        return ""
-
-    return extract_title(note_path)
+    return read_note_title(request.args.get('note'))
 
 
 @main_bp.route("/load-note", methods=['GET'])
 @login_required
 def load_note():
-    note_path = Path(os.path.join(
-        NOTES_DIRECTORY,
-        request.args.get('note')
-    )).resolve()
-    # TODO: sanitize note path
-
-    if not note_path.is_file():
-        return "Please select a note to view."
-
-    with note_path.open('r') as fp:
-        # Discard title line
-        _ = fp.readline()
-
-        # Load rest of note
-        mdstuff = fp.read()
-
-    # TODO: add tex
-    if note_path.suffix == ".md":
-        html_data = pypandoc.convert_text(
-            mdstuff,
-            'html5',
-            format='md'
-        )
-
-    return html_data
+    return render_note(request.args.get('note'))
 
 
 @main_bp.route("/load-raw", methods=['GET'])
 @login_required
 def load_raw_note():
-    note_path = Path(os.path.join(
-        NOTES_DIRECTORY,
-        request.args.get('note')
-    )).resolve()
-    # TODO: sanitize note path
-
-    if not note_path.is_file():
-        return ""
-
-    raw_note = ""
-    with note_path.open('r') as fp:
-        raw_note = fp.read()
-
-    return raw_note
+    return read_raw_note(request.args.get('note'))
 
 
 @main_bp.route("/save", methods=['POST'])
 @login_required
-def save_note():
-    note_path = Path(os.path.join(
-        NOTES_DIRECTORY,
-        request.form.get('note')
-    )).resolve()
-    # TODO: sanitize note path
-
-    raw_data = request.form.get('raw')
-    # TODO: sanitize raw_data
-
-    with note_path.open('w') as fp:
-        fp.write(raw_data)
-
-    return Response("", status=201)
-
-
-def make_site_dir(directory):
-    dirs = []
-    files = {}
-    for item in directory.iterdir():
-        # item = item.resolve()   TODO
-        # TODO: assert item.is_relative_to(NOTES_DIRECTORY)
-        if item.is_dir():
-            dirs.append(item)
-        elif item.is_symlink():
-            continue
-        elif item.is_file():
-            if not item.suffix == '.md':
-                continue
-            try:
-                note = item.relative_to(NOTES_DIRECTORY)
-            except ValueError:
-                continue
-            title = extract_title(item)
-            while title in files.keys():
-                title += ' [duplicate]'
-            files[title] = note
-
-    output = ""
-    dirs.sort()
-    for directory in dirs:
-        if directory.name.startswith('.') or directory.name.startswith('_') or directory in SKIP_DIRS:
-            continue
-
-        output += f'\n<details><summary>{directory.name}</summary>'
-        output += make_site_dir(directory)
-        output += '\n</details>'
-
-    for item in sorted(files.items()):
-        # output += f'\n<p><a href="/view?note={item[1]}">{item[0]}</a></p>'
-        output += f'\n<p><button class="sitedir" onclick="$.fn.changeNote(\'{item[1]}\')">{item[0]}</button></p>'
-
-    return output
+def post_note():
+    try:
+        save_note(
+                request.form.get('note'),
+                request.form.get('raw')
+            )
+        return Response("", status=201)
+    except Exception:
+        return Response("", status=500)
 
 
 @main_bp.route("/site-directory", methods=['GET'])
 @login_required
 def sitedir():
-    return make_site_dir(NOTES_DIRECTORY)
+    return make_site_dir()
 
 
 @main_bp.route("/profile", methods=['GET'])
 @login_required
 def profile():
     return render_template("profile.html")
-
-############
-# POST Ops #
-############
-
-# @main_bp.route("/save", methods=['PUT'])
-# def save_note():
-#     target = request.form.getvalue('target', None)
-#     data = request.form.getvalue('data', None).replace('\r\n', '\n')
-#
-#     # TODO: Assert data is ascii
-#
-#     sanitize_path(target)
-#     assert(target is not None)
-#     assert(os.path.isfile(target))
-#
-#     if not data.endswith('\n'):
-#         data += '\n'
-#
-#     if target:
-#         with open(target, 'w') as fp:
-#             fp.write(data)
 
 
 def create_app():
@@ -341,18 +183,6 @@ def create_app():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "notes_directory",
-        help="Directory to serve notes from.",
-    )
-
-    args = parser.parse_args()
-
-    NOTES_DIRECTORY = Path(args.notes_directory).resolve()
-    assert NOTES_DIRECTORY.is_dir()
-    print(f"SERVING NOTES DIRECTORY: {NOTES_DIRECTORY}")
-
     app = create_app()
 
     @app.teardown_appcontext
