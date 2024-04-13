@@ -17,7 +17,7 @@ python add_user.py <USERNAME> -p <PASSWORD>
 
 3. Start the Docker container
 ```bash
-TAMENOTESDIR='/home/ender/PrivateNotes' docker compose run web
+TAMENOTESDIR='<YOUR-NOTES-DIRECTORY>' docker compose up -d
 ```
 
 

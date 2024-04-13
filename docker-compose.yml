@@ -1,21 +1,34 @@
 services:
-  web:
-    build:
-      context: .
-    container_name: "tame-web"
-    command: ['gunicorn', '--bind', '0.0.0.0:5000', 'tame:create_app()']
-    ports:
-      - 5000:5000
-      #    expose:
-      #      - 5000
-    volumes:
-      - ./auth.db:/opt/tame/auth.db
-      - ${TAMENOTESDIR:-}:/etc/notes
-  nginx:
-    build:
-      context: ./nginx
-    container_name: "tame-nginx"
-    ports:
-      - 1337:80
-    depends_on:
-      - web
+    web:
+        build:
+            context: .
+        image: tame_web
+        container_name: "tame-web"
+        command: ['gunicorn', '--bind', '0.0.0.0:5000', 'tame:create_app()']
+        expose:
+            - 5000
+        volumes:
+            - ./auth.db:/opt/tame/auth.db
+            - ${TAMENOTESDIR:-"./README.md"}:/etc/notes
+        networks:
+            tame_net:
+                ipv4_address: 172.49.234.3
+    nginx:
+        build:
+            context: ./nginx
+        image: tame_nginx
+        container_name: "tame-nginx"
+        ports:
+            - 80:80
+        depends_on:
+            - web
+        networks:
+            tame_net:
+                ipv4_address: 172.49.234.2
+networks:
+    tame_net:
+        name: tame_network
+        ipam:
+            driver: default
+            config:
+                - subnet: "172.49.234.0/24"

@@ -1,6 +1,5 @@
 FROM ubuntu:22.04
 
-
 COPY requirements.txt /opt/tame/requirements.txt
 RUN apt update && \
     apt install -y --no-install-recommends \
@@ -19,10 +18,6 @@ COPY static /opt/tame/static
 
 RUN echo 'notes_directory: "/etc/notes"' > /opt/tame/config.yml
 
-# WORKDIR /opt/tame
-# ENV GUNICORN_PROCESSES="1"
-# ENV GUNICORN_THREADS="2"
-# ENV GUNICORN_TIMEOUT="120"
-# ENV GUNICORN_BIND="0.0.0.0:8080"
+WORKDIR /opt/tame
 
 CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "tame:create_app()"]
