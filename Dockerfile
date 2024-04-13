@@ -1,24 +1,28 @@
 FROM ubuntu:22.04
 
 
+COPY requirements.txt /opt/tame/requirements.txt
 RUN apt update && \
     apt install -y --no-install-recommends \
         pandoc \
         python3 \
-        python3-pip && \
-    mkdir /opt/tame
-
-COPY requirements.txt /opt/tame/requirements.txt
-
-RUN pip3 install -r /opt/tame/requirements.txt
+        python3-pip \
+        sqlite3 && \
+    pip3 install -r /opt/tame/requirements.txt
 
 COPY database.py /opt/tame
 COPY models.py /opt/tame
 COPY note_ops.py /opt/tame
 COPY tame.py /opt/tame
-COPY templates /opt/tame
-COPY static /opt/tame
+COPY templates /opt/tame/templates
+COPY static /opt/tame/static
 
 RUN echo 'notes_directory: "/etc/notes"' > /opt/tame/config.yml
 
-CMD python3 /opt/tame/tame.py
+# WORKDIR /opt/tame
+# ENV GUNICORN_PROCESSES="1"
+# ENV GUNICORN_THREADS="2"
+# ENV GUNICORN_TIMEOUT="120"
+# ENV GUNICORN_BIND="0.0.0.0:8080"
+
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "tame:create_app()"]

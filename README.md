@@ -7,7 +7,7 @@ Run the following commands from the tame directory:
 
 1. Build the Docker container
 ```bash
-docker build -t tame:latest .
+docker compose build
 ```
 
 2. Add users to the `auth.db`. This can also be done after the Docker container has started.
@@ -17,7 +17,7 @@ python add_user.py <USERNAME> -p <PASSWORD>
 
 3. Start the Docker container
 ```bash
-docker run -v <NOTES_DIRECTORY>:/etc/notes -v auth.db:/opt/tame/auth.db -p 80:5000 tame:latest
+TAMENOTESDIR='/home/ender/PrivateNotes' docker compose run web
 ```
 
 

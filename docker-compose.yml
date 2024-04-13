@@ -1,0 +1,21 @@
+services:
+  web:
+    build:
+      context: .
+    container_name: "tame-web"
+    command: ['gunicorn', '--bind', '0.0.0.0:5000', 'tame:create_app()']
+    ports:
+      - 5000:5000
+      #    expose:
+      #      - 5000
+    volumes:
+      - ./auth.db:/opt/tame/auth.db
+      - ${TAMENOTESDIR:-}:/etc/notes
+  nginx:
+    build:
+      context: ./nginx
+    container_name: "tame-nginx"
+    ports:
+      - 1337:80
+    depends_on:
+      - web

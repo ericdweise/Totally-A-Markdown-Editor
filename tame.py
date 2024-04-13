@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 
 from flask import (
@@ -183,6 +184,32 @@ def create_app():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-H",
+        "--host",
+        default="0.0.0.0",
+        help="The host to serve to",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8088,
+        help="The TCP to listen on",
+    )
+    parser.add_argument(
+        "-D",
+        "--debug",
+        action="store_true",
+        help="Run Flask in debug mode",
+    )
+
+    args = parser.parse_args()
+
+    print(args)
+
     app = create_app()
 
     @app.teardown_appcontext
@@ -191,6 +218,3 @@ if __name__ == "__main__":
 
     # Init DB file
     init_db()
-
-    app.run(debug=True)
-    # TODO: don't run in debug, but add as an argument
