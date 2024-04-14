@@ -15,7 +15,23 @@ docker compose build
 python add_user.py <USERNAME> -p <PASSWORD>
 ```
 
-3. Start the Docker container
+3. Generate self signed certificate:
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout nginx/tame.key -out nginx/tame.crt
+```
+When prompted for the `Common Name` enter your server's IP address.
+
+4. Generate Diffie-Hellman parameters:
+```bash
+openssl dhparam -out nginx/dhparam.pem 4096
+```
+
+5. Set the nginx server_name. In the following command substitute your host's IP address:
+```bash
+sed -i 's/SERVER_NAME/<<YOU SERVER IP ADDRES>>/' nginx.nginx.conf
+```
+
+6. Start the Docker container
 ```bash
 TAMENOTESDIR='<YOUR-NOTES-DIRECTORY>' docker compose up -d
 ```

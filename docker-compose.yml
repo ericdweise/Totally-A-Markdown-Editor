@@ -20,11 +20,16 @@ services:
         container_name: "tame-nginx"
         ports:
             - 80:80
+            - 443:443
         depends_on:
             - web
         networks:
             tame_net:
                 ipv4_address: 172.49.234.2
+        volumes:
+            - ./nginx/tame.crt:/etc/nginx/tame.crt:ro
+            - ./nginx/tame.key:/etc/nginx/tame.key:ro
+            - ./nginx/dhparam.pem:/etc/nginx/dhparam.pem:ro
 networks:
     tame_net:
         name: tame_network
