@@ -123,27 +123,22 @@ $.fn.newNote = function() {
     // TODO: Add this to "on-click" of the "New Note" button
 
     // Prompt user for new file
-    var target = prompt('Name of new note','');
-    console.log('New note target: ' + target);
+    var note = prompt('Name of new note','');
+    console.log('New note: ' + note);
 
     // Send AJAX, wait for response
     // TODO: Write the "new-note" POST endpoint
     var form = new FormData();
-    form.append('target', target);
+    form.append('note', note);
+    form.append('field2', 'field2_data');
 
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-            // Reload site directory so it includes new file
-            $.fn.loadSiteDir();
-
-            // View new note (will be empty)
-            $.fn.viewNote();
-
-            // Open the editor
-            $.fn.editNote();
+    xhr.onloadend = function() {
+        if (xhr.status == 201) {
+            // Open new note in Edit mode
+            window.location.replace("/edit?note=" + note);
         } else {
-            alert("Failed to create new note at " + target);
+            alert("Failed to create new note at " + note);
         }
     }
 

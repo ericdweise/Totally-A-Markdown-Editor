@@ -29,6 +29,7 @@ from database import (
 )
 from models import User
 from note_ops import (
+    create_new_note,
     make_site_dir,
     render_note,
     read_note_title,
@@ -127,6 +128,14 @@ def get_note_title():
 @login_required
 def load_note():
     return render_note(request.args.get('note'))
+
+
+@main_bp.route("/new-note", methods=['POST'])
+@login_required
+def new_note():
+    if create_new_note(request.form.get('note')):
+        return Response("", status=201)
+    return Response("", status=500)
 
 
 @main_bp.route("/load-raw", methods=['GET'])

@@ -179,3 +179,17 @@ def save_note(note, contents):
     path = _note2path(note)
     with path.open("w") as fp:
         fp.write(contents)
+
+
+def create_new_note(note):
+    path = _note2path(note)
+    if path.exists():
+        return False
+
+    if not path.parent.exists():
+        path.parent.mkdir(parents=True)
+
+    with path.open("w") as fp:
+        fp.write("New Note")
+
+    return True
