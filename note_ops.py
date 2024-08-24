@@ -1,7 +1,9 @@
 import os
 
+from io import BytesIO
 from pathlib import Path
 
+import magic
 import pypandoc
 import yaml
 
@@ -105,7 +107,7 @@ def make_site_dir(root=None):
         root = NOTES_DIRECTORY
 
     dirs = []
-    files = {}
+    files = []
     for item in root.iterdir():
         item = item.resolve()
         if not item.is_relative_to(NOTES_DIRECTORY):
@@ -121,20 +123,20 @@ def make_site_dir(root=None):
             continue
 
         elif item.is_file():
-            note = _path2note(item)
-            title = _read_title(item)
-
-            if title in files.keys():
-                i = 1
-                new_title = f"{title} - {i}"
-                while new_title in files.keys():
-                    i += 1
-                    new_title = f"{title} - {i}"
-                title = new_title
-            files[title] = note
+            if item.suffix.lower() in [".md", ".txt"]:
+                note = _path2note(item)
+                title = _read_title(item)
+                files.append(f'<p><button class="sitedir" onclick="$.fn.changeNote(\'{note}\')">{title}</button></p>')
+            elif item.suffix.lower() in [".pdf", ".djvu"]:
+                note = _path2note(item)
+                title = item.name
+                files.append(f'<p><a href="download?file={note}">{title}</a></p>')
+            else:
+                continue
 
     output = ""
     dirs.sort()
+    files.sort()  # TODO: sort by title, not note
     for directory in dirs:
         if directory in SKIP_DIRS:
             continue
@@ -143,8 +145,8 @@ def make_site_dir(root=None):
         output += make_site_dir(directory)
         output += "\n</details>"
 
-    for item in sorted(files.items()):
-        output += f'\n<p><button class="sitedir" onclick="$.fn.changeNote(\'{item[1]}\')">{item[0]}</button></p>'
+    for item in files:
+        output += item
 
     return output
 
@@ -193,3 +195,20 @@ def create_new_note(note):
         fp.write("New Note")
 
     return True
+
+
+def get_downloadable_file(note):
+    filepath = _note2path(note)
+    if not filepath:
+        return None, None, None
+
+    filename = os.path.split(filepath)[-1]
+    if not filename:
+        filename = "tame-download"
+
+    mimetype = magic.from_file(filepath, mime=True)
+
+    with open(filepath, 'rb') as fp:
+        filebytes = BytesIO(fp.read())
+
+    return filebytes, filename, mimetype

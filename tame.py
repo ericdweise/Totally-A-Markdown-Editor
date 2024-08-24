@@ -11,6 +11,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_file,
     send_from_directory,
     url_for,
 )
@@ -30,6 +31,7 @@ from database import (
 from models import User
 from note_ops import (
     create_new_note,
+    get_downloadable_file,
     make_site_dir,
     render_note,
     read_note_title,
@@ -167,6 +169,18 @@ def sitedir():
 @login_required
 def profile():
     return render_template("profile.html")
+
+
+@main_bp.route("/download", methods=['GET'])
+@login_required
+def download_file():
+    data, filename, mt = get_downloadable_file(request.args.get("file"))
+    if data:
+        return send_file(
+            data,
+            mimetype=mt,
+            as_attachment=True,
+            download_name=filename)
 
 
 def create_app():
