@@ -28,7 +28,7 @@ openssl dhparam -out nginx/dhparam.pem 4096
 
 5. Set the nginx server_name. In the following command substitute your host's IP address:
 ```bash
-sed -i 's/SERVER_NAME/<<YOU SERVER IP ADDRES>>/' nginx.nginx.conf
+sed -i 's/SERVER_NAME/<SERVER IP ADDRESS>/' nginx/nginx.conf
 ```
 
 6. Start the Docker container
