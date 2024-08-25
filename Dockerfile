@@ -3,6 +3,7 @@ FROM ubuntu:22.04
 COPY requirements.txt /opt/tame/requirements.txt
 RUN apt update && \
     apt install -y --no-install-recommends \
+        libmagic1 \
         pandoc \
         python3 \
         python3-pip \
