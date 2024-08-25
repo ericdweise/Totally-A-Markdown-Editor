@@ -98,6 +98,14 @@ def _render_textfile(path):
         return fp.read()
 
 
+def _sanitize_input_text(text):
+    # CRLF -> LF only
+    text = text.replace("\r\n", "\n")
+    text = text.replace("\n\r", "\n")  # just to be careful
+
+    return text
+
+
 ######################
 # "PUBLIC" FUNCTIONS #
 ######################
@@ -177,8 +185,8 @@ def read_raw_note(note):
 
 
 def save_note(note, contents):
-    # TODO: Sanitize contents
     path = _note2path(note)
+    contents = _sanitize_input_text(contents)
     with path.open("w") as fp:
         fp.write(contents)
 
