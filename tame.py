@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import datetime
 import os
 
 from flask import (
@@ -58,7 +59,10 @@ def login():
 def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+    remember = True if request.form.get('remember') == "on" else False
+    duration = None
+    if remember:
+        duration = datetime.datetime.now() + datetime.timedelta(days=30)
 
     statement = select(User).filter_by(username=username)
     # e = db_session.execute(statement)
