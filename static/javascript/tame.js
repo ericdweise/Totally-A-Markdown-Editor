@@ -28,7 +28,7 @@ $.fn.buildTOC = function() {
 				par.style.marginLeft = depth-1 + 'ch';
 			}
 
-			document.getElementById('tame-table-of-contents').appendChild(par);
+			document.getElementById('note-toc').appendChild(par);
 		}
 
 		if (item.localName != null && item.localName.length == 2 && item.localName.charAt(0) == 'h' && item.localName.charAt(1) >= '1' && item.localName.charAt(1) <= '6') {
@@ -36,7 +36,7 @@ $.fn.buildTOC = function() {
 		}
 	}
 
-    let targetDiv = document.getElementById('tame-table-of-contents');
+    let targetDiv = document.getElementById('note-toc');
 
     // Clear current ToC
     targetDiv.innerHTML = "";
@@ -47,7 +47,7 @@ $.fn.buildTOC = function() {
 	hdr.textContent = "Contents";
 	targetDiv.appendChild(hdr);
 
-	const vwr = $('#tame-file-contents');
+	const vwr = $('#note-rendered');
 	vwr[0].childNodes.forEach(build_toc);
 };
 
@@ -86,7 +86,7 @@ $.fn.viewNote = function() {
 	var contentXhr = new XMLHttpRequest();
 	contentXhr.onreadystatechange = function() {
 		if (contentXhr.readyState == XMLHttpRequest.DONE) {
-			$("#tame-file-contents").html(contentXhr.responseText);
+			$("#note-rendered").html(contentXhr.responseText);
 		}
 	}
 
@@ -151,7 +151,7 @@ $.fn.saveNote = function() {
 	const url = new URL(window.location.href);
 	var path = url.searchParams.get('note');
 
-    let raw_data = document.getElementById("editor").innerText;
+    let raw_data = document.getElementById("editor").value;
 
     var form = new FormData();
     form.append('note', path);

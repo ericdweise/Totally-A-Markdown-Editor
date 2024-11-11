@@ -1,28 +1,22 @@
 {% extends "tame.html" %}
 {% block body %}
   {% include 'header.html' %}
-  <div id="middle" class="clearfix">
-    <div id="contents">
+  <div id="middle" class="flex-row">
+    <div id="note" class="flex-col">
       <div id="note-info">
         <p id="note-title"></p>
         <p id="note-path"></p>
         <button class="blocky" id="edit" onclick="$.fn.editNote()">Edit Note</button>
       </div> <!-- note-info -->
-      <div id="tame-table-of-contents"></div>
-      <div id="tame-file-contents"></div>
-    </div> <!-- id="contents" -->
-    <div id="sidebar">
-      <div class="flex-parent">
-        <div class="flex-child">
-          <p class="sec-title">Notes</p>
-        </div>
-        <div class="flex-child">
-          <button class="blocky" id="file" onclick="$.fn.newNote()">New Note</button>
-        </div>
-      </div>
+      <div id="note-toc"></div>
+      <div id="note-rendered"></div>
+    </div> <!-- id="note" -->
+    <div id="site-directory" class="flex-col">
+      <p class="sec-title">Notes</p>
+      <button class="blocky" id="file" onclick="$.fn.newNote()">New Note</button>
       <hr>
       <div id="directory"></div>
-    </div> <!-- id="sidebar" -->
+    </div> <!-- id="site-directory" -->
   </div> <!-- id="middle" -->
   {% include 'footer.html' %}
 {% endblock body %}

@@ -1,5 +1,16 @@
-/* DIVs */
+/* Common classes */
+div.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+div.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Setting up page background and main contents */
 html {
+	box-sizing: border-box;
 	font-family: Trebuchet MS, Arial, sans-serif;
 	background-color: #323232;
 	background-image: url("/static/images/background.jpg");
@@ -8,101 +19,104 @@ html {
 	background-repeat: no-repeat;
 }
 body {
+	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 	background-color: rgba(250,250,255,0.85);
 	min-height: 100vh;
 }
-div#login-container {
-    display: flex;
-    justify-content: center;
-}
-div#login-box {
-    margin: 1ch;
-    padding: 1ch;
-    border: 1px solid #909090;
-    border-radius: 1ch;
-}
-div.login-field {
-    margin: 0.5ch;
-}
-div#container {
+div#main {
+	min-height: 100vh;
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
 	margin: auto;
 	max-width: 150ch;
 	color: #000000;
 }
-div#middle {
-	margin: 0;
-	padding: 0;
-	display: table;
-	width: 100%;
-	border-top: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-}
-div#contents {
-	display: table-cell;
-	padding: 2ch;
-	width: 70%;
-	height: 100%;
-}
-div#sidebar {
-	display: table-cell;
-	padding: 2ch;
-	width: 30%;
-	height: 100%;
-	border-left: 1px solid #000000;
-}
-div#editor {
+
+/* Login page */
+div#login {
 	margin: 1ch;
-	border:solid 2px #000000;
+	padding: 1ch;
+	border: 1px solid #909090;
 	border-radius: 1ch;
-	background-color: #ffffff;
-	padding: 2ch;
-	min-height:20ch;
-	white-space: pre-wrap;
-	font-family: monospace;
 }
+div.login-field {
+	margin: 0.5ch;
+}
+
+/* Header and Footer (and the in between) */
 div#header {
-    padding: 1ch 1ch;
+	display: flex;
+	justify-content: space-between;
+	padding: 1ch 1ch;
 }
 div#footer {
 	padding: 2ch;
 	clear: both;
 	text-align: center;
 }
-div#tame-table-of-contents {
-    border: 1px solid #909090;
-    border-radius: 1ch;
-    margin: 1ch;
-    padding: 1ch;
+div#middle {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	border-top: 1px solid #000000;
+	border-bottom: 1px solid #000000;
 }
-div.hidden {
-	display: none;
-}
-div.flex-parent {
-    display: flex;
-}
-div.flex-child {
-    flex: 1;
-}
-div.text-align-right {
-    text-align: right;
-}
-.clearfix:before, .clearfix:after {
-	content: '\0020';
-	display: block;
-	overflow: hidden;
-	visibility: hidden;
-	width: 0;
-	height: 0; }
-.clearfix:after {
-	clear: both;
-}
-.clearfix {
-	zoom: 1;
+p#site-name {
+	color: #103838;
+	font-size: 25px;
+	margin: 0;
 }
 
-/* DIV small scren */
+/* Note */
+div#note {
+	flex-wrap: wrap;
+	justify-content: center;
+	padding: 2ch;
+	width: 70%;
+	height: 100%;
+}
+div#note-toc {
+	border: 1px solid #909090;
+	border-radius: 1ch;
+	margin: 1ch;
+	padding: 1ch;
+}
+p#note-path {
+	color: #898989;
+	font-size: 20px;
+	text-decoration: none;
+	margin: 0;
+}
+
+/* Site Directory*/
+div#site-directory {
+	padding: 2ch;
+	width: 30%;
+	min-height: 100%;
+	border-left: 1px solid #000000;
+}
+
+/* Edit note */
+div#edit-menu {
+	margin: 1ch;
+}
+textarea#editor {
+	flex-grow: 1;
+	margin: 1ch;
+	border:solid 2px #000000;
+	border-radius: 1ch;
+	background-color: #ffffff;
+	padding: 2ch;
+	height: 100%;
+	width: 100%;
+	font-family: monospace;
+	resize: none;
+}
+
+/* Small screens */
 @media screen and (max-width: 100ch) {
 	div#container {
 		display: inline-block;
@@ -110,16 +124,16 @@ div.text-align-right {
 		margin: 0;
 		padding: 0;
 	}
-	div#contents, div#sidebar {
+	div#note, div#site-directory {
 		display: block;
 		width: 100%;
 		box-sizing: border-box;
 	}
-	div#header, div#footer, div#contents, div#sidebar {
+	div#header, div#footer, div#note, div#site-directory {
 		margin: 0;
 		margin-bottom: 2ch;
 	}
-	div#sidebar {
+	div#site-directory {
 		border: none;
 		border-top: 1px solid #000000;
 	}
@@ -131,7 +145,7 @@ div.text-align-right {
 	}
 }
 
-/* Misc. Elements */
+/* Element styling */
 hr {
 	border: none;
 	height: 1px;
@@ -148,7 +162,7 @@ button.blocky {
 button.sitedir {
 	color: #2a6c6c;
 	text-decoration: none;
-    border: none;
+	border: none;
 
 } 
 button.sitedir:hover {
@@ -158,13 +172,13 @@ details > details {
 	margin-left: 2ch;
 }
 details > summary {
-    list-style-type: "\21d2\20";
+	list-style-type: "\21d2\20";
 }
 details > summary:hover {
 	text-decoration: underline;
 }
 details[open] > summary {
-    list-style-type: "\21d3\20";
+	list-style-type: "\21d3\20";
 }
 details > p {
 	margin: 0;
@@ -174,13 +188,10 @@ details[open] {
 	margin-bottom: 1ch;
 }
 
-
-/* TABLE OF CONTENTS */
+/* Rendered note contents */
 p.toc-item {
-    margin: 0;
+	margin: 0;
 }
-
-/* HEADERS */
 p#note-title {
 	color: #103838;
 	font-size: 50px;
@@ -188,21 +199,10 @@ p#note-title {
 	text-decoration: none;
 	margin: 0;
 }
-p#note-path {
-    color: #898989;
-    font-size: 20px;
-    text-decoration: none;
-    margin: 0;
-}
-p#site-name {
-	color: #103838;
-    font-size: 25px;
-    margin: 0;
-}
 p.sec-title {
-    font-size: 25px;
-    margin: 0;
-    font-weight: bold;
+	font-size: 25px;
+	margin: 0;
+	font-weight: bold;
 }
 h1 {
 	margin-top: 3ch;
@@ -210,9 +210,6 @@ h1 {
 }
 
 /* TEXT */
-.center {
-	text-align: center;
-}
 a {
 	color: #2a6c6c;
 	text-decoration: none;
