@@ -100,7 +100,7 @@ def logout():
 @main_bp.route('/', methods=['GET'])
 @login_required
 def index():
-    return redirect("/view")
+    return redirect("/view?note=main.md")
 
 
 @main_bp.route('/view', methods=['GET'])
