@@ -23,6 +23,10 @@ from flask_login import (
     logout_user,
 )
 from sqlalchemy import select
+from urllib.parse import (
+    urlparse,
+    parse_qs,
+)
 from uuid import uuid4
 
 from database import (
@@ -33,6 +37,7 @@ from models import User
 from note_ops import (
     create_new_note,
     get_downloadable_file,
+    get_image,
     make_site_dir,
     render_note,
     read_note_title,
@@ -106,7 +111,26 @@ def index():
 @main_bp.route('/view', methods=['GET'])
 @login_required
 def view_note():
-    return render_template('view.html')
+    note = request.args.get("note")
+    if not note:
+        return Response("", status=404)
+
+    kwargs = {"note_path": note}
+    kwargs["note_title"] = read_note_title(note)
+    kwargs["note_contents"] = render_note(note)
+
+    return render_template('view.html', **kwargs)
+
+
+@main_bp.route('/<path:var>', methods=['GET'])
+@login_required
+def get_media(var):
+    parsed_url = urlparse(request.headers.get("Referer"))
+    note = parse_qs(parsed_url.query)["note"][0]
+    data, mt = get_image(note, request.path[1:])
+    if not data:
+        return Response("{}", status=404)
+    return send_file(data, mimetype=mt)
 
 
 @main_bp.route('/edit', methods=['GET'])

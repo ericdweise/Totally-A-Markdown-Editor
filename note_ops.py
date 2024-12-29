@@ -207,7 +207,7 @@ def create_new_note(note):
 
 def get_downloadable_file(note):
     filepath = _note2path(note)
-    if not filepath:
+    if not filepath or not filepath.exists():
         return None, None, None
 
     filename = os.path.split(filepath)[-1]
@@ -220,3 +220,21 @@ def get_downloadable_file(note):
         filebytes = BytesIO(fp.read())
 
     return filebytes, filename, mimetype
+
+
+def get_image(note, image):
+    note_path = _note2path(note)
+    if not note_path or not note_path.exists():
+        return None, None
+
+    image_path = note_path.parent.joinpath(Path(image)).resolve()
+
+    if not _is_path_safe(image_path) or not image_path.exists():
+        return None, None
+
+    mimetype = magic.from_file(image_path, mime=True)
+
+    with image_path.open('rb') as fp:
+        filebytes = BytesIO(fp.read())
+
+    return filebytes, mimetype

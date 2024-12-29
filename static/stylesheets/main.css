@@ -7,6 +7,9 @@ div.flex-col {
 	display: flex;
 	flex-direction: column;
 }
+img {
+    max-width: 100%;
+}
 
 /* Setting up page background and main contents */
 html {
