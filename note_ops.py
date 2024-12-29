@@ -134,7 +134,7 @@ def make_site_dir(root=None):
             if item.suffix.lower() in [".md", ".txt"]:
                 note = _path2note(item)
                 title = _read_title(item)
-                files.append(f'<p><button class="sitedir" onclick="$.fn.changeNote(\'{note}\')">{title}</button></p>')
+                files.append(f'<p><a href="view?note={note}">{title}</a></p>')
             elif item.suffix.lower() in [".pdf", ".djvu"]:
                 note = _path2note(item)
                 title = item.name

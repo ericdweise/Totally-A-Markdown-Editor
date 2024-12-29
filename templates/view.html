@@ -4,12 +4,12 @@
   <div id="middle" class="flex-row">
     <div id="note" class="flex-col">
       <div id="note-info">
-        <p id="note-title"></p>
-        <p id="note-path"></p>
+          <p id="note-title">{{ note_title }}</p>
+          <p id="note-path">{{ note_path }}</p>
         <button class="blocky" id="edit" onclick="$.fn.editNote()">Edit Note</button>
       </div> <!-- note-info -->
       <div id="note-toc"></div>
-      <div id="note-rendered"></div>
+      <div id="note-rendered">{{ note_contents | safe }}</div>
     </div> <!-- id="note" -->
     <div id="site-directory" class="flex-col">
       <p class="sec-title">Notes</p>

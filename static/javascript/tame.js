@@ -52,51 +52,6 @@ $.fn.buildTOC = function() {
 };
 
 
-$.fn.changeNote = function(path) {
-    // Update history with new note
-    let stateObj = { id: "100" };
-    window.history.pushState(
-        stateObj,
-        "",
-        "/view?note=" + path
-    );
-    $.fn.viewNote();
-};
-
-$.fn.viewNote = function() {
-	// Get markdown path from url.search
-	const url = new URL(window.location.href);
-	var path = url.searchParams.get('note');
-
-    // Set note-path
-    $("#note-path").html(path)
-
-    // Get note's title
-	var titleXhr = new XMLHttpRequest();
-	titleXhr.onreadystatechange = function() {
-		if (titleXhr.readyState == XMLHttpRequest.DONE) {
-			$("#note-title").html(titleXhr.responseText);
-		}
-	}
-
-	titleXhr.open( 'GET', '/get-title?note=' + path, true);
-	titleXhr.send();
-
-    // Get note contents
-	var contentXhr = new XMLHttpRequest();
-	contentXhr.onreadystatechange = function() {
-		if (contentXhr.readyState == XMLHttpRequest.DONE) {
-			$("#note-rendered").html(contentXhr.responseText);
-		}
-	}
-
-	contentXhr.open( 'GET', '/load-note?note=' + path, true);
-	contentXhr.send();
-
-    // Generate Table of Contents for note
-	contentXhr.onload = $.fn.buildTOC;
-};
-
 $.fn.editNote = function() {
     let url = new URL(window.location.href);
     url.pathname = 'edit';
@@ -182,7 +137,7 @@ $.fn.abortEdit = function() {
 $(document).ready(function() {
     if (document.location.pathname == '/view') {
         $.fn.loadSiteDir();
-        $.fn.viewNote();
+        $.fn.buildTOC();
     } else if (document.location.pathname == '/edit') {
         $.fn.getRawNote();
     }

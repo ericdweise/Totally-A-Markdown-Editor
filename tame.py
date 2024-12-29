@@ -147,19 +147,6 @@ def favicon():
         mimetype='image/vnd.microsoft.icon')
 
 
-# TODO: wrap in to load-note endpoint
-@main_bp.route('/get-title', methods=['GET'])
-@login_required
-def get_note_title():
-    return read_note_title(request.args.get('note'))
-
-
-@main_bp.route("/load-note", methods=['GET'])
-@login_required
-def load_note():
-    return render_note(request.args.get('note'))
-
-
 @main_bp.route("/new-note", methods=['POST'])
 @login_required
 def new_note():
