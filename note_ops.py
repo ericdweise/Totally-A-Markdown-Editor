@@ -172,6 +172,13 @@ def render_note(note):
         return ""
 
 
+def get_note_text(note):
+    path = _note2path(note)
+
+    with path.open("r") as fp:
+        return fp.read()
+
+
 def read_note_title(note):
     path = _note2path(note)
 

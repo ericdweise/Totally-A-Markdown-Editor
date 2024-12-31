@@ -5,6 +5,6 @@
     <button class="blocky" id="save" onclick="$.fn.saveNote()">Save</button>
     <button class="blocky" id="abort" onclick="$.fn.abortEdit()">Abort</button>
   </div> <!-- id="edit-menu" -->
-  <textarea id="editor"></textarea>
+  <textarea id="editor">{{ note_text }}</textarea>
 
 {% endblock body %}

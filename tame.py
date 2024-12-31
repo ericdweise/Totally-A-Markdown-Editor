@@ -38,6 +38,7 @@ from note_ops import (
     create_new_note,
     get_downloadable_file,
     get_image,
+    get_note_text,
     make_site_dir,
     render_note,
     read_note_title,
@@ -138,7 +139,11 @@ def get_media(var):
 @main_bp.route('/edit', methods=['GET'])
 @login_required
 def edit_note():
-    return render_template('edit.html')
+    note = request.args.get("note")
+    title = read_note_title(note)
+    kwargs = {"page_title": f"TAME: Edit {title}"}
+    kwargs["note_text"] = get_note_text(note)
+    return render_template('edit.html', **kwargs)
 
 
 @main_bp.route('/favicon.ico', methods=['GET'])

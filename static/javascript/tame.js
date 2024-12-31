@@ -58,22 +58,6 @@ $.fn.editNote = function() {
     window.location.replace(url.href);
 };
 
-$.fn.getRawNote = function() {
-	const url = new URL(window.location.href);
-	var path = url.searchParams.get('note');
-
-    // Get raw note contents
-	var contentXhr = new XMLHttpRequest();
-	contentXhr.onreadystatechange = function() {
-		if (contentXhr.readyState == XMLHttpRequest.DONE) {
-			$("#editor").html(contentXhr.responseText);
-		}
-	}
-
-	contentXhr.open( 'GET', '/load-raw?note=' + path, true);
-	contentXhr.send();
-};
-
 $.fn.newNote = function() {
     // TODO: Add this to "on-click" of the "New Note" button
 
@@ -138,7 +122,5 @@ $(document).ready(function() {
     if (document.location.pathname == '/view') {
         $.fn.loadSiteDir();
         $.fn.buildTOC();
-    } else if (document.location.pathname == '/edit') {
-        $.fn.getRawNote();
     }
 })
