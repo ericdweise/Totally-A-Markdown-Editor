@@ -57,7 +57,7 @@ auth_bp = Blueprint("auth", "tame")
 
 @auth_bp.route("/login", methods=["GET"])
 def login():
-    return render_template("login.html")
+    return render_template("login.html", page_title="TAME login")
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -116,8 +116,10 @@ def view_note():
         return Response("", status=404)
 
     kwargs = {"note_path": note}
-    kwargs["note_title"] = read_note_title(note)
+    title = read_note_title(note)
+    kwargs["note_title"] = title
     kwargs["note_contents"] = render_note(note)
+    kwargs["page_title"] = f"TAME: {title}"
 
     return render_template('view.html', **kwargs)
 
@@ -183,6 +185,7 @@ def sitedir():
 @main_bp.route("/profile", methods=['GET'])
 @login_required
 def profile():
+    kwargs = {"page_title": "TAME: User Profile"}
     return render_template("profile.html")
 
 
