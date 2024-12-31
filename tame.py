@@ -191,7 +191,7 @@ def sitedir():
 @login_required
 def profile():
     kwargs = {"page_title": "TAME: User Profile"}
-    return render_template("profile.html")
+    return render_template("profile.html", **kwargs)
 
 
 @main_bp.route("/download", methods=['GET'])
