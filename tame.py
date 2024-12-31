@@ -27,6 +27,7 @@ from urllib.parse import (
     urlparse,
     parse_qs,
 )
+
 from uuid import uuid4
 
 from database import (
@@ -76,14 +77,19 @@ def login_post():
     try:
         user = db_session.scalars(statement).one()
     except Exception:
-        print("FAILED TO GET USER")
         return login_fail()
 
     if not user or not user.check_password(password):
-        print(f"PW check: {user.check_password(password)}")
         return login_fail()
 
     login_user(user, remember=remember)
+
+    next_page = None
+    query_string = parse_qs(urlparse(request.referrer).query)
+    if query_string:
+        next_page = query_string.get("next", [])[0]
+    if next_page:
+        return redirect(next_page)
     return redirect("/")
 
 
