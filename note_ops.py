@@ -63,15 +63,40 @@ def _path2note(path):
     return f"{path.relative_to(NOTES_DIRECTORY)}"
 
 
-def _read_title(path):
-    try:
-        with path.open("r") as f:
-            title = f.readline().strip()
-    except Exception:
-        title = "<Unknown>"
+def _parse_yaml_metadata(fp):
+    yaml_str = ""
+    yaml_info = {}
 
-    if (title is None) or (not len(title)):
-        return "<Unknown>"
+    try:
+        line = fp.readline().strip()
+        if line == "---":
+            line = fp.readline()
+            while line and line.strip() != "...":
+                yaml_str += line
+                line = fp.readline()
+
+        yaml_info = yaml.safe_load(yaml_str)
+    except Exception:
+        pass
+
+    return yaml_info, fp
+
+
+# TODO: make work with _parse_yaml_metadata
+def _read_title(path):
+    title = "<UNKNOWN>"
+    try:
+        title = f"<{path.name}>"
+        with path.open("r") as f:
+            line = f.readline().strip()
+            if line == "---":
+                line = f.readline().strip()
+                while line != "...":
+                    if line.startswith("title: "):
+                        title = line[7:]
+                        break
+    except Exception:
+        pass
 
     return title
 
@@ -79,7 +104,7 @@ def _read_title(path):
 def _render_markdown(path):
     with path.open("r") as fp:
         # Discard title line
-        _ = fp.readline()
+        _, fp = _parse_yaml_metadata(fp)
 
         # Load rest of note
         mdstuff = fp.read()

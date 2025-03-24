@@ -279,6 +279,17 @@ code span.va { color: #b0b0ff; }					/* Variable			powder blue */
 code span.vs { color: #ffffff; }					/* VerbatimString	white */
 code span.wa { color: #ffb0b0; font-weight: bold; } /* Warning			salmon */
 
+/* MATH */
+span.math.display {
+	display: block;
+	max-width: 80ch;
+}
+mjx-container {
+	background-color: #d1e0ed;
+	border-radius: 1ch;
+	padding: 1ch;
+}
+
 /* TABLES */
 table, td, th {
 	border-collapse: collapse;
