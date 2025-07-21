@@ -37,15 +37,19 @@ from database import (
 from models import User
 from note_ops import (
     create_new_note,
+    create_site_dir,
     get_downloadable_file,
     get_image,
     get_note_text,
-    make_site_dir,
     render_note,
     read_note_title,
     read_raw_note,
     save_note,
 )
+
+
+# Constants
+SITE_DIRECTORY_FILE = "/tmp/site_dir.html"
 
 
 # Create Blueprints
@@ -164,6 +168,7 @@ def favicon():
 @login_required
 def new_note():
     if create_new_note(request.form.get('note')):
+        create_site_dir(SITE_DIRECTORY_FILE)
         return Response("", status=201)
     return Response("", status=500)
 
@@ -182,6 +187,7 @@ def post_note():
                 request.form.get('note'),
                 request.form.get('raw')
             )
+        create_site_dir(SITE_DIRECTORY_FILE)
         return Response("", status=201)
     except Exception:
         return Response("", status=500)
@@ -190,7 +196,9 @@ def post_note():
 @main_bp.route("/site-directory", methods=['GET'])
 @login_required
 def sitedir():
-    return make_site_dir()
+    if not os.path.exists(SITE_DIRECTORY_FILE):
+        create_site_dir(SITE_DIRECTORY_FILE)
+    return send_file(SITE_DIRECTORY_FILE)
 
 
 @main_bp.route("/profile", methods=['GET'])

@@ -135,7 +135,12 @@ def _sanitize_input_text(text):
 # "PUBLIC" FUNCTIONS #
 ######################
 
-def make_site_dir(root=None):
+def create_site_dir(filepath):
+    with open(filepath, "w") as fp:
+        fp.write(recursive_build_site_dir())
+
+
+def recursive_build_site_dir(root=None):
     if not root:
         root = NOTES_DIRECTORY
 
@@ -175,7 +180,7 @@ def make_site_dir(root=None):
             continue
 
         output += f"\n<details><summary>{directory.name}</summary>"
-        output += make_site_dir(directory)
+        output += recursive_build_site_dir(directory)
         output += "\n</details>"
 
     for item in files:
