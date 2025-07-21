@@ -3,6 +3,32 @@ $.fn.loadSiteDir = function() {
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == XMLHttpRequest.DONE) {
 			$("#directory").html(xhr.responseText);
+
+			// Expand ToC to show current note
+			let url = new URL(window.location.href);
+			var note_name = url.searchParams.get('note');
+			var note_fields = note_name.split("/");
+			var toc_expand = document.getElementById('directory');
+
+			for(var i = 0; i < note_fields.length - 1; i++) {
+				// details = toc_expand.querySelectorAll('details');
+				var search_elts = toc_expand.children;
+				for (var j = 0; j < search_elts.length; j++) {
+					if (search_elts[j].nodeName == 'DETAILS' && search_elts[j].querySelector('summary').innerHTML == note_fields[i]) {
+						toc_expand = search_elts[j]
+						toc_expand.setAttribute('open', '');
+						break;
+					}
+				}
+			}
+			search_elts = toc_expand.children;
+			for (j = 0; j < search_elts.length; j++) {
+				if (search_elts[j].nodeName == 'P') {
+					if (search_elts[j].querySelector('a').getAttribute('href') == 'view?note=' + note_name) {
+						search_elts[j].style.fontWeight = "bold";
+					}
+				}
+			}
 		}
 	}
 
